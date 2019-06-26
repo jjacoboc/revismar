@@ -1,4 +1,0 @@
-#Thu Jun 13 05:52:30 PET 2019
-base.0=/Users/Jonathan/AndroidStudioProjects/libraryapp/build/app/intermediates/transforms/dexMerger/debug/0
-path.0=classes.dex
-renamed.0=classes.dex

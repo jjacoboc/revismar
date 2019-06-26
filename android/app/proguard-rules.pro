@@ -5,3 +5,8 @@
 -keep class io.flutter.view.**  { *; }
 -keep class io.flutter.**  { *; }
 -keep class io.flutter.plugins.**  { *; }
+
+# Kotlin
+-keep class kotlin.Metadata { *; }
+-dontnote kotlin.internal.PlatformImplementationsKt
+-dontnote kotlin.reflect.jvm.internal.**

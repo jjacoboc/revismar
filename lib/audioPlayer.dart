@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'constants.dart';
 import 'sharedPreferencesHelper.dart';
 import 'package:audioplayer/audioplayer.dart';
 import 'package:flutter/material.dart';
@@ -7,9 +8,6 @@ import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
 
 typedef void OnError(Exception exception);
-
-const kUrl = "http://www.rxlabz.com/labz/audio2.mp3";
-const kUrl2 = "http://www.rxlabz.com/labz/audio.mp3";
 
 enum PlayerState { stopped, playing, paused }
 
@@ -22,6 +20,8 @@ class _AudioAppState extends State<AudioApp> {
   bool _isLoading = true;
   String year = '';
   String edition = '';
+  String article = '';
+  String author = '';
   Duration duration;
   Duration position;
 
@@ -32,12 +32,20 @@ class _AudioAppState extends State<AudioApp> {
   PlayerState playerState = PlayerState.stopped;
 
   get isPlaying => playerState == PlayerState.playing;
+
   get isPaused => playerState == PlayerState.paused;
 
   get durationText =>
-      duration != null ? duration.toString().split('.').first : '';
+      duration != null ? duration
+          .toString()
+          .split('.')
+          .first : '';
+
   get positionText =>
-      position != null ? position.toString().split('.').first : '';
+      position != null ? position
+          .toString()
+          .split('.')
+          .first : '';
 
   bool isMuted = false;
 
@@ -65,28 +73,21 @@ class _AudioAppState extends State<AudioApp> {
         .listen((p) => setState(() => position = p));
     _audioPlayerStateSubscription =
         audioPlayer.onPlayerStateChanged.listen((s) {
-      if (s == AudioPlayerState.PLAYING) {
-        setState(() => duration = audioPlayer.duration);
-      } else if (s == AudioPlayerState.STOPPED) {
-        onComplete();
-        setState(() {
-          position = duration;
+          if (s == AudioPlayerState.PLAYING) {
+            setState(() => duration = audioPlayer.duration);
+          } else if (s == AudioPlayerState.STOPPED) {
+            onComplete();
+            setState(() {
+              position = duration;
+            });
+          }
+        }, onError: (msg) {
+          setState(() {
+            playerState = PlayerState.stopped;
+            duration = new Duration(seconds: 0);
+            position = new Duration(seconds: 0);
+          });
         });
-      }
-    }, onError: (msg) {
-      setState(() {
-        playerState = PlayerState.stopped;
-        duration = new Duration(seconds: 0);
-        position = new Duration(seconds: 0);
-      });
-    });
-  }
-
-  Future play() async {
-    await audioPlayer.play(kUrl);
-    setState(() {
-      playerState = PlayerState.playing;
-    });
   }
 
   Future _playLocal() async {
@@ -119,16 +120,15 @@ class _AudioAppState extends State<AudioApp> {
   }
 
   Future _loadFile() async {
-    //final bytes = await _loadFileBytes(kUrl, onError: (Exception exception) => print('_loadFile => exception $exception'));
     Preference.load();
     String strYear = Preference.getString('year');
     String strEdition = Preference.getString('edition');
+    String strOrder = Preference.getString('order');
+    String strArticle = Preference.getString('article');
+    String strAuthor = Preference.getString('author');
 
     var response = await get(Uri.encodeFull(
-        "http://52.15.119.234:8080/ereader-service-0.0.1-SNAPSHOT/audio/" +
-            strYear +
-            "/" +
-            strEdition));
+        Constants.url_audio + strYear + "/" + strEdition + "/" + strOrder));
     var bytes = response.bodyBytes;
     final dir = await getApplicationDocumentsDirectory();
     final file = new File('${dir.path}/audio.mp3');
@@ -139,6 +139,8 @@ class _AudioAppState extends State<AudioApp> {
         localFilePath = file.path;
         year = strYear;
         edition = strEdition;
+        article = strArticle;
+        author = strAuthor;
         _isLoading = false;
       });
     }
@@ -147,91 +149,168 @@ class _AudioAppState extends State<AudioApp> {
   @override
   Widget build(BuildContext context) {
     return new Center(
-          child: new Material(
-              elevation: 2.0,
-              color: Colors.grey[200],
-              child: new Center(
-                child: _isLoading
-                    ? new Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    CircularProgressIndicator(
-                      valueColor:
-                      new AlwaysStoppedAnimation<Color>(Colors.blue),
-                    ),
-                    Container(
-                      padding: EdgeInsets.only(top: 10.0),
-                      child: Text('cargando audio...',
-                          style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Times New Roman')),
-                    )
-                  ],
+      child: new Material(
+        //elevation: 2.0,
+        //color: Colors.grey[200],
+
+          child: new Center(
+            child: _isLoading
+                ? new Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                CircularProgressIndicator(
+                  valueColor:
+                  new AlwaysStoppedAnimation<Color>(Colors.blue),
+                ),
+                Container(
+                  padding: EdgeInsets.only(top: 10.0),
+                  child: Text('cargando audio...',
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Times New Roman')),
                 )
-                    : new Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        padding: EdgeInsets.only(bottom: 20.0),
-                        child: Text(
-                          'Revista de Marina ' +
-                              year +
-                              ', Edición #' +
-                              edition,
+              ],
+            ) : Container(
+              width: MediaQuery
+                  .of(context)
+                  .size
+                  .width,
+              height: MediaQuery
+                  .of(context)
+                  .size
+                  .height,
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Color.fromRGBO(2, 29, 38, 1.0),
+                      Color.fromRGBO(2, 29, 38, 0.7)
+                    ],
+                  )
+              ),
+              child: new Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text('Revista de Marina ' + year,
                           style:
-                          TextStyle(fontSize: 24, fontFamily: 'Arial'),
+                          TextStyle(fontSize: 24, fontFamily: 'Arial', color: Colors.white),
                         ),
+                        Text('Edición #' + edition,
+                          style:
+                          TextStyle(fontSize: 18, fontFamily: 'Arial', fontStyle: FontStyle.italic, color: Colors.white),
+                        ),
+                      ],
+                    ),
+                    _buildPlayer(),
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.max,
+                        children: <Widget>[
+                          Container(
+                            padding: EdgeInsets.only(left: 5.0, right: 5.0),
+                            child: Text('Artículo:', style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white),),
+                          ),
+                          Container(
+                            padding: EdgeInsets.only(left: 5.0),
+                            child: Text(article,
+                              style: TextStyle(fontSize: 13, fontFamily: 'Arial', color: Colors.white),
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.only(left: 5.0, top: 20.0),
+                            child: Text('Redactado por:', style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white),),
+                          ),
+                          Container(
+                            padding: EdgeInsets.only(left: 5.0, right: 5.0),
+                            child: Text(author,
+                              style: TextStyle(fontSize: 13,
+                                  fontStyle: FontStyle.italic,
+                                  fontFamily: 'Arial', color: Colors.white),
+                            ),
+                          ),
+                        ],
                       ),
-                      new Material(child: _buildPlayer()),
-                    ]),
-              )
+                    ),
+                  ]
+              ),
+            ),
+          )
       ),
     );
   }
 
-  Widget _buildPlayer() => new Container(
-      padding: new EdgeInsets.all(16.0),
-      child: new Column(mainAxisSize: MainAxisSize.min, children: [
-        new Row(mainAxisSize: MainAxisSize.min, children: [
-          new IconButton(
-              onPressed: isPlaying ? null : () => _playLocal(),
-              iconSize: 64.0,
-              icon: new Icon(Icons.play_arrow),
-              color: Colors.cyan),
-          new IconButton(
-              onPressed: isPlaying ? () => pause() : null,
-              iconSize: 64.0,
-              icon: new Icon(Icons.pause),
-              color: Colors.cyan),
-          new IconButton(
-              onPressed: isPlaying || isPaused ? () => stop() : null,
-              iconSize: 64.0,
-              icon: new Icon(Icons.stop),
-              color: Colors.cyan),
-        ]),
-        duration == null
-            ? new Container()
-            : new Slider(
-                value: position?.inMilliseconds?.toDouble() ?? 0.0,
-                onChanged: (double value) =>
-                    audioPlayer.seek((value / 1000).roundToDouble()),
-                min: 0.0,
-                max: duration.inMilliseconds.toDouble()),
-        new Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            new IconButton(
-                onPressed: () => mute(true),
-                icon: new Icon(Icons.headset_off),
-                color: Colors.cyan),
-            new IconButton(
-                onPressed: () => mute(false),
-                icon: new Icon(Icons.headset),
-                color: Colors.cyan),
-          ],
-        ),
-      ]));
+  Widget _buildPlayer() {
+      return Container(
+        color: Colors.white,
+          padding: EdgeInsets.only(left: 16.0, right: 16.0),
+          child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                          onPressed: isPlaying ? null : () => _playLocal(),
+                          iconSize: 64.0,
+                          icon: new Icon(Icons.play_arrow),
+                          color: Color.fromRGBO(2, 29, 38, 0.9)
+                      ),
+                      IconButton(
+                          onPressed: isPlaying ? () => pause() : null,
+                          iconSize: 64.0,
+                          icon: new Icon(Icons.pause),
+                          color: Color.fromRGBO(2, 29, 38, 0.9)
+                      ),
+                      IconButton(
+                          onPressed: isPlaying || isPaused
+                              ? () => stop()
+                              : null,
+                          iconSize: 64.0,
+                          icon: new Icon(Icons.stop),
+                          color: Color.fromRGBO(2, 29, 38, 0.9)
+                      ),
+                    ]
+                ),
+                duration == null ?
+                Container()
+                    : Slider(
+                        value: position?.inMilliseconds?.toDouble() ?? 0.0,
+                        onChanged: (double value) =>
+                          audioPlayer.seek((value / 1000).roundToDouble()),
+                        min: 0.0,
+                        max: duration.inMilliseconds.toDouble(),
+                        activeColor: Color.fromRGBO(2, 29, 38, 0.9),
+                        inactiveColor: Colors.grey,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    IconButton(
+                        onPressed: () => mute(true),
+                        icon: new Icon(Icons.volume_off),
+                        color: Color.fromRGBO(2, 29, 38, 0.9)
+                    ),
+                    IconButton(
+                        onPressed: () => mute(false),
+                        icon: new Icon(Icons.volume_up),
+                        color: Color.fromRGBO(2, 29, 38, 0.9)
+                    ),
+                  ],
+                ),
+              ]
+          )
+      );
+  }
 
 }

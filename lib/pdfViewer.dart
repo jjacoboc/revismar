@@ -1,4 +1,5 @@
 import 'sharedPreferencesHelper.dart';
+import 'constants.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -32,7 +33,7 @@ class _PdfViewerState extends State<PdfViewer> {
     String filename = Preference.getString("filename");
 
     var response = await http.get(
-        Uri.encodeFull("http://52.15.119.234:8080/ereader-service-0.0.1-SNAPSHOT/document/" + year + "/" + edition + "/" + filename));
+        Uri.encodeFull(Constants.url_document + year + "/" + edition + "/" + filename));
         //Uri.encodeFull("http://10.0.2.2:8084/document/1907/04/AparatoDelCapitanScott.pdf"));
 
     var bytes = response.bodyBytes;
@@ -75,9 +76,9 @@ class _PdfViewerState extends State<PdfViewer> {
                     ],
                   )
               )
-                  : PDFViewer(
+                  : PDFViewer(showIndicator: true, showNavigation: true, showPicker: false,
                 document: pdfDocument,
-                //tooltip: PDFViewerTooltip(first: "Batatas")
+                tooltip: PDFViewerTooltip(first: "Primero", last: "Utimo", next: "Siguiente", previous: "Anterior", jump: "Saltar", pick: "Escoger")
               )
           ),
         ),

@@ -8,19 +8,18 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
 
-  final logo = Image.asset('images/header-logo.png');
-  bool _visible = true;
   @override
   void initState() {
     super.initState();
     Future.delayed(
-      Duration(seconds: 3),
-          () {
+      Duration(seconds: 3), () {
         Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => LoginPage(),
-            ));
+          context,
+          MaterialPageRoute(
+            //builder: (context) => LoginPage(),
+            builder: (context) => LoginPage(),
+          )
+        );
       },
     );
   }
@@ -36,9 +35,6 @@ class _SplashScreenState extends State<SplashScreen> {
       home: Stack(
         fit: StackFit.expand,
           children: <Widget>[
-            AnimatedOpacity(
-              opacity: _visible ? 1.0 : 0.0,
-            ),
             Container(
               decoration: BoxDecoration(color: Color.fromRGBO(2, 29, 38, 1.0)),
               child: Column(

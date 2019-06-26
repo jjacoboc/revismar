@@ -3,7 +3,7 @@ import 'book.dart';
 import 'bookList.dart';
 import 'constants.dart';
 import 'pdfViewer.dart';
-import 'audioPlayer.dart';
+import 'articleViewList.dart';
 import 'dart:io';
 import 'sharedPreferencesHelper.dart';
 import 'package:flutter/material.dart';
@@ -64,24 +64,26 @@ class _BookListPageState extends State<BookListPage> {
                             Column(
                               children: <Widget>[
                                 Container(
-                                  child: Text(item.books[index].title, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold), textAlign: TextAlign.left,),
-                                  padding: EdgeInsets.only(top: 5.0),
+                                  child: Text('Edición #' + item.books[index].edition.toString(), style: TextStyle(fontSize: 13)),
                                 ),
                                 Container(
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
                                       Container(
-                                        child: Text('Edición #' + item.books[index].edition.toString(), style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic)),
+                                        child: GestureDetector(
+                                          child: Text('Escuchar', style: TextStyle(fontSize: 13, color: Colors.blue, decoration: TextDecoration.underline)),
+                                          onTap: () { this.toArticles(item.books[index]); },
+                                        ),
                                       ),
                                       Container(
                                         child: GestureDetector(
                                           child: Image(
-                                            image: AssetImage('images/play.png'),
+                                            image: AssetImage('images/headsets.png'),
                                             height: 16.0,
                                             width: 16.0,
                                           ),
-                                          onTap: () { this.toAudioBook(item.books[index].year, item.books[index].edition); },
+                                          onTap: () { this.toArticles(item.books[index]); },
                                         ),
                                         padding: EdgeInsets.only(left: 5.0),
                                       ),
@@ -211,7 +213,7 @@ class _BookListPageState extends State<BookListPage> {
           List<dynamic> jsonbooks = json.decode(response.body);
           jsonbooks.forEach((dynamic ele) {
             final Book book = new Book(
-                ele['idtBook'],
+                ele['idt_book'],
                 ele['code'],
                 ele['title'],
                 ele['author'],
@@ -235,7 +237,7 @@ class _BookListPageState extends State<BookListPage> {
   Future<File> getImage(String year, String edition) async {
     print("method getImage....");
     var response = await http.get(
-      Uri.encodeFull("http://52.15.119.234:8080/ereader-service-0.0.1-SNAPSHOT/image/" + year + "/" + edition));
+      Uri.encodeFull(Constants.url_image + year + "/" + edition));
       //Uri.encodeFull("http://10.0.2.2:8084/image/" + year +"/" + edition));
     var bytes = response.bodyBytes;
     String dir = (await getApplicationDocumentsDirectory()).path;
@@ -244,7 +246,6 @@ class _BookListPageState extends State<BookListPage> {
   }
 
   goToPdfViewer(Book book) {
-    print("method goToPdfViewer....");
     if(book != null) {
       String url = book.url;
       String title = book.title;
@@ -269,16 +270,23 @@ class _BookListPageState extends State<BookListPage> {
     }
   }
 
-  toAudioBook(int year, int edition) {
-    String strEdition = edition < 10 ? "0" + edition.toString() : edition.toString();
-    String strYear = year.toString();
-    Preference.load();
-    Preference.setString('year', strYear);
-    Preference.setString('edition', strEdition);
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => AudioApp(),
-        ));
+  toArticles(Book book) {
+    if(book != null) {
+      int id = book.idtBook;
+      String title = book.title;
+      int year = book.year;
+      int edition = book.edition;
+      Preference.load();
+      Preference.setInt('idtBook', id);
+      Preference.setString('title', title);
+      Preference.setInt('year', year);
+      Preference.setInt('edition', edition);
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ArticleViewList(),
+          )
+      );
+    }
   }
 }

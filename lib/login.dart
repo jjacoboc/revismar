@@ -15,13 +15,12 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final logo = Image.asset('images/mgp-ereader-logo.png');
-  var docTypeList = ['DNI', 'CID'];
+  var docTypeList = ['DNI', 'CIP'];
   String docTypeSelected = 'DNI';
-  bool firstStepLogin = true;
   final docNumController = TextEditingController();
   final passController = TextEditingController();
 
-  void getUser() async {
+  void login() async {
     Preference.load();
     String docNum = docNumController.text;
     if(docNum != '') {
@@ -32,8 +31,32 @@ class _LoginPageState extends State<LoginPage> {
               docNumController.text),
           headers: {"Accept": "application/json"});
       if(response.statusCode == 200) {
-        setState(() { this.firstStepLogin = false;});
         Preference.setString('user', response.body);
+        Map<String, dynamic> user = jsonDecode(response.body);
+        String pass = user['password'];
+        if(passController.text != '') {
+          if(pass == passController.text) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => BookListPage(),
+                ));
+          } else {
+            Alert(
+              context: context,
+              title: "Error",
+              desc: "Contraseña incorrecta.",
+              type: AlertType.error,
+            ).show();
+          }
+        } else {
+          Alert(
+            context: context,
+            title: "Error",
+            desc: "Ingrese su contraseña.",
+            type: AlertType.error,
+          ).show();
+        }
       } else {
         Alert(
           context: context,
@@ -47,35 +70,6 @@ class _LoginPageState extends State<LoginPage> {
         context: context,
         title: "Error",
         desc: "Debe ingresar su DNI.",
-        type: AlertType.error,
-      ).show();
-    }
-  }
-
-  void login() async {
-    Preference.load();
-    Map<String, dynamic> user = jsonDecode(Preference.getString('user'));
-    String pass = user['password'];
-    if(passController.text != '') {
-      if(pass == passController.text) {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => BookListPage(),
-            ));
-      } else {
-        Alert(
-          context: context,
-          title: "Error",
-          desc: "Contraseña incorrecta.",
-          type: AlertType.error,
-        ).show();
-      }
-    } else {
-      Alert(
-        context: context,
-        title: "Error",
-        desc: "Ingrese su contraseña.",
         type: AlertType.error,
       ).show();
     }
@@ -129,37 +123,7 @@ class _LoginPageState extends State<LoginPage> {
                 padding: EdgeInsets.only(top: 62),
                 child: Column(
                   children: <Widget>[
-                    firstStepLogin ? Container(
-                      width: MediaQuery.of(context).size.width / 1.2,
-                      height: 45,
-                      padding:
-                      EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(50)),
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(color: Colors.black12, blurRadius: 5)
-                          ]
-                      ),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          items: docTypeList.map((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                          iconSize: 24.0,
-                          value: docTypeSelected,
-                          onChanged: (String newValue) {
-                            setState(() {
-                              this.docTypeSelected = newValue;
-                            });
-                          },
-                        ),
-                      ),
-                    ) : Container(),
-                    firstStepLogin ? Container(
+                    Container(
                       width: MediaQuery.of(context).size.width / 1.2,
                       height: 45,
                       margin: EdgeInsets.only(top: 16),
@@ -185,11 +149,11 @@ class _LoginPageState extends State<LoginPage> {
                             Icons.perm_identity,
                             color: Colors.grey,
                           ),
-                          hintText: 'Número Documento',
+                          hintText: 'DNI',
                         ),
                       ),
-                    ) : Container(),
-                    !firstStepLogin ? Container(
+                    ),
+                    Container(
                       width: MediaQuery.of(context).size.width / 1.2,
                       height: 45,
                       margin: EdgeInsets.only(top: 16),
@@ -213,8 +177,8 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         obscureText: true,
                       ),
-                    ) : Container(),
-                    !firstStepLogin ? Align(
+                    ),
+                    Align(
                       alignment: Alignment.centerRight,
                       child: Padding(
                         padding: const EdgeInsets.only(top: 16, right: 32),
@@ -223,29 +187,8 @@ class _LoginPageState extends State<LoginPage> {
                           style: TextStyle(color: Colors.grey),
                         ),
                       ),
-                    ) : Align(),
-                    //Spacer(),
-                    firstStepLogin ? Container(
-                      height: 45,
-                      margin: EdgeInsets.only(top: 20.0),
-                      width: MediaQuery.of(context).size.width / 1.2,
-                      child: Center(
-                        child: RaisedButton(
-                            textColor: Colors.white,
-                            color: Color.fromRGBO(2, 29, 38, 0.8),
-                            colorBrightness: Brightness.light,
-                            highlightColor: Color.fromRGBO(2, 29, 38, 1.0),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                            child: Text(
-                              'Siguiente'.toUpperCase(),
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            onPressed: getUser),
-                      ),
-                    ) : Container(),
-                    !firstStepLogin ? Container(
+                    ),
+                    Container(
                       height: 45,
                       margin: EdgeInsets.only(top: 20.0),
                       width: MediaQuery.of(context).size.width / 1.2,
@@ -264,7 +207,7 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                             onPressed: login),
                       ),
-                    ) : Container(),
+                    ),
                   ],
                 ),
               )
