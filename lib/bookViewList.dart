@@ -8,7 +8,6 @@ import 'dart:io';
 import 'sharedPreferencesHelper.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 final bookViewList = new GlobalKey<_BookListPageState>();
@@ -57,15 +56,17 @@ class _BookListPageState extends State<BookListPage> {
                     semanticContainer: false,
                     shape: BeveledRectangleBorder(),
                     child: InkWell(
-                      onTap: () { this.goToPdfViewer(item.books[index]); },
+                      //onTap: () { this.goToPdfViewer(item.books[index]); },
+                      onTap: () { this.toArticles(item.books[index]); },
                       child: Column(
                           children: <Widget>[
-                            Image.asset('images/caratula'+item.books[index].year.toString()+item.books[index].edition.toString()+'.png'),//this.getFrontImage(item.books[index].year, item.books[index].edition),
+                            getFrontCover(item.books[index].year, item.books[index].edition),
                             Column(
                               children: <Widget>[
                                 Container(
                                   child: Text('Edición #' + item.books[index].edition.toString(), style: TextStyle(fontSize: 13)),
                                 ),
+                                /*
                                 Container(
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -90,6 +91,7 @@ class _BookListPageState extends State<BookListPage> {
                                     ],
                                   ),
                                 ),
+                                */
                               ],
                             ),
                           ]
@@ -155,31 +157,29 @@ class _BookListPageState extends State<BookListPage> {
     }
   }
 
+  Widget getFrontCover(int year, int edition) {
+    Image img = getFrontImage(year, edition);
+    if(img == null) img = getDefaultCover();
+    return img;
+  }
+
   Widget getFrontImage(int year, int edition) {
-    print("method getFrontImage....");
-    print("year: " + year.toString());
-    print("edition: " + edition.toString());
     String strEdition = edition < 10 ? "0" + edition.toString() : edition.toString();
     String strYear = year.toString();
-    return FutureBuilder<File> (
-      future: this.getImage(strYear, strEdition),
-      builder: (BuildContext context, AsyncSnapshot<File> snapshot) {
-        if (snapshot.connectionState == ConnectionState.done && snapshot.data != null) {
-          return Image(
-            image: FileImage(snapshot.data),
-            fit: BoxFit.contain,
-            filterQuality: FilterQuality.high,
-            gaplessPlayback: true,
-          );
-        } else {
-          return Image(
-            image: AssetImage('images/defaultCover.jpg'),
-            fit: BoxFit.contain,
-            filterQuality: FilterQuality.high,
-            gaplessPlayback: true,
-          );
-        }
-      },
+    return Image.network(
+      Constants.url_bucket + strYear + Constants.separator + strEdition + Constants.separator + Constants.frontPage + strYear + edition.toString() + Constants.jpg_ext,
+      fit: BoxFit.contain,
+      filterQuality: FilterQuality.high,
+      gaplessPlayback: true,
+    );
+  }
+
+  Widget getDefaultCover() {
+    return Image(
+      image: AssetImage(Constants.defaultCover),
+      fit: BoxFit.contain,
+      filterQuality: FilterQuality.high,
+      gaplessPlayback: true,
     );
   }
 
@@ -232,17 +232,6 @@ class _BookListPageState extends State<BookListPage> {
             bookList.add(BookList(year: year.toString(), books: books));
           });
     });
-  }
-
-  Future<File> getImage(String year, String edition) async {
-    print("method getImage....");
-    var response = await http.get(
-      Uri.encodeFull(Constants.url_image + year + "/" + edition));
-      //Uri.encodeFull("http://10.0.2.2:8084/image/" + year +"/" + edition));
-    var bytes = response.bodyBytes;
-    String dir = (await getApplicationDocumentsDirectory()).path;
-    File file = new File('$dir/caratula.png');
-    return file.writeAsBytes(bytes);
   }
 
   goToPdfViewer(Book book) {

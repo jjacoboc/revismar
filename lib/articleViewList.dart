@@ -1,6 +1,7 @@
 import 'article.dart';
 import 'section.dart';
 import 'sectionList.dart';
+import 'pdfViewer.dart';
 import 'audioPlayer.dart';
 import 'constants.dart';
 import 'sharedPreferencesHelper.dart';
@@ -88,6 +89,27 @@ class _ArticleViewListState extends State<ArticleViewList> {
         this._loadingInProgress = false;
       });
     });
+  }
+
+  toPdfViewer(String order, String article, String author, int i, int j) {
+    Preference.load();
+    Preference.setString('year', this.strYear);
+    Preference.setString('edition', this.strEdition);
+    Preference.setString('order', order);
+    Preference.setString('indexSection', i.toString());
+    Preference.setString('indexArticle', j.toString());
+    if(author != '') {
+      Preference.setString('article', article);
+      Preference.setString('author', author);
+    } else {
+      Preference.setString('article', 'EDITORIAL');
+      Preference.setString('author', article);
+    }
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => PdfViewer(),
+        ));
   }
 
   toAudioBook(String order, String article, String author) {
@@ -187,7 +209,8 @@ class _ArticleViewListState extends State<ArticleViewList> {
                                       height: 16.0,
                                       width: 16.0,
                                     ),
-                                    onTap: () { this.toAudioBook(ord, nam, aut); },
+                                    //onTap: () { this.toAudioBook(ord, nam, aut); },
+                                    onTap: () { this.toPdfViewer(ord, nam, aut, i+1, j+1); },
                                   ),
                                 ),
                               ],

@@ -1,0 +1,4 @@
+#Mon Jul 08 15:03:06 PET 2019
+base.0=/Users/Jonathan/AndroidStudioProjects/revismar/build/app/intermediates/transforms/dexMerger/debug/0
+path.0=classes.dex
+renamed.0=classes.dex
