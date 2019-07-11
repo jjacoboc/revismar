@@ -2,6 +2,7 @@ import 'sharedPreferencesHelper.dart';
 import 'constants.dart';
 import 'dart:io';
 import 'dart:async';
+import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_plugin_pdf_viewer/flutter_plugin_pdf_viewer.dart';
@@ -81,10 +82,8 @@ class _PdfViewerState extends State<PdfViewer> {
 
   void initAudioPlayer() {
     audioPlayer = new AudioPlayer();
-    _positionSubscription = audioPlayer.onAudioPositionChanged
-        .listen((p) => setState(() => position = p));
-    _audioPlayerStateSubscription =
-        audioPlayer.onPlayerStateChanged.listen((s) {
+    _positionSubscription = audioPlayer.onAudioPositionChanged.listen((p) => setState(() => position = p));
+    _audioPlayerStateSubscription = audioPlayer.onPlayerStateChanged.listen((s) {
           if (s == AudioPlayerState.PLAYING) {
             setState(() => duration = audioPlayer.duration);
           } else if (s == AudioPlayerState.STOPPED) {
@@ -135,17 +134,23 @@ class _PdfViewerState extends State<PdfViewer> {
     Preference.load();
     String strYear = Preference.getString('year');
     String strEdition = Preference.getString('edition');
-    String strOrder = Preference.getString('order');
+    //String strOrder = Preference.getString('order');
     String strArticle = Preference.getString('article');
     String strAuthor = Preference.getString('author');
     String i = Preference.getString("indexSection");
     String j = Preference.getString("indexArticle");
     String filename = "audio" + i + j;
 
+    String url = Constants.url_bucket + strYear + Constants.separator + strEdition + Constants.separator + filename + Constants.mp3_ext;
+
+    /*
     var response = await http.get(
         Uri.encodeFull(Constants.url_document + year + Constants.separator + edition + Constants.separator + filename + Constants.separator + Constants.mp3));
         //Uri.encodeFull(Constants.url_audio + strYear + "/" + strEdition + "/" + strOrder));
     var bytes = response.bodyBytes;
+    */
+
+    final bytes = await _loadFileBytes(url, onError: (Exception exception) => print('_loadFile => exception $exception'));
     String dir = (await getApplicationDocumentsDirectory()).path;
     File file = new File('$dir/$filename.' + Constants.mp3);
 
@@ -160,6 +165,16 @@ class _PdfViewerState extends State<PdfViewer> {
         _isAudioLoading = false;
       });
     }
+  }
+
+  Future<Uint8List> _loadFileBytes(String url, {OnError onError}) async {
+    Uint8List bytes;
+    try {
+      bytes = await http.readBytes(url);
+    } on http.ClientException {
+      rethrow;
+    }
+    return bytes;
   }
 
   downloadFile() async {
@@ -286,12 +301,21 @@ class _PdfViewerState extends State<PdfViewer> {
                       color: Colors.grey
                   )
               ) :
+              isPlaying ?
               Expanded(
                   child: IconButton(
-                      onPressed: isPlaying ? null : () => _playLocal(),
+                      onPressed: () => pause(),
+                      iconSize: 64.0,
+                      icon: new Icon(Icons.pause),
+                      color: Colors.amber
+                  )
+              ) :
+              Expanded(
+                  child: IconButton(
+                      onPressed: () => _playLocal(),
                       iconSize: 64.0,
                       icon: new Icon(Icons.play_arrow),
-                      color: Color.fromRGBO(2, 29, 38, 0.9)
+                      color: Colors.green,
                   )
               ),
               Expanded(

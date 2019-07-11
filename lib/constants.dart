@@ -12,6 +12,7 @@ class Constants {
 
   static const String separator = "/";
   static const String jpg_ext = ".jpg";
+  static const String mp3_ext = ".mp3";
   static const String pdf = "pdf";
   static const String mp3 = "mp3";
   static const String frontPage = "caratula";

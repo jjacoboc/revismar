@@ -66,32 +66,6 @@ class _BookListPageState extends State<BookListPage> {
                                 Container(
                                   child: Text('Edición #' + item.books[index].edition.toString(), style: TextStyle(fontSize: 13)),
                                 ),
-                                /*
-                                Container(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Container(
-                                        child: GestureDetector(
-                                          child: Text('Escuchar', style: TextStyle(fontSize: 13, color: Colors.blue, decoration: TextDecoration.underline)),
-                                          onTap: () { this.toArticles(item.books[index]); },
-                                        ),
-                                      ),
-                                      Container(
-                                        child: GestureDetector(
-                                          child: Image(
-                                            image: AssetImage('images/headsets.png'),
-                                            height: 16.0,
-                                            width: 16.0,
-                                          ),
-                                          onTap: () { this.toArticles(item.books[index]); },
-                                        ),
-                                        padding: EdgeInsets.only(left: 5.0),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                */
                               ],
                             ),
                           ]
@@ -193,10 +167,31 @@ class _BookListPageState extends State<BookListPage> {
           yearList = response.body;
           List<dynamic> listyears = json.decode(yearList);
           print(listyears);
-          listyears.forEach((ele){
-            getBooksByYear(ele);
+          listyears.forEach((dynamic node) {
+            List<Book> books = new List<Book>();
+            List<dynamic> listBooks = node['books'];
+            String year = node['year'].toString();
+            listBooks.forEach((dynamic ele) {
+              final Book book = new Book(
+                ele['idt_book'],
+                ele['code'],
+                ele['title'],
+                ele['author'],
+                ele['publisher'],
+                ele['edition'],
+                ele['year'],
+                ele['url'],
+                ele['createdBy'],
+                ele['createdDate'],
+                ele['updatedBy'],
+                ele['updatedDate']
+              );
+              books.add(book);
+            });
+            setState(() {
+              bookList.add(BookList(year: year, books: books));
+            });
           });
-          bookList.sort((a, b) => a.year.compareTo(b.year));
           setState(() {
             this._loadingInProgress = false;
           });
