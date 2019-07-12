@@ -9,6 +9,7 @@ class Constants {
   static const String url_sections = "http://52.15.119.234:8080/ereader-service-0.0.1-SNAPSHOT/sections/";
   static const String url_articles = "http://52.15.119.234:8080/ereader-service-0.0.1-SNAPSHOT/articles/";
   static const String url_audio = "http://52.15.119.234:8080/ereader-service-0.0.1-SNAPSHOT/audio/";
+  static const String url_user = "http://52.15.119.234:8080/ereader-service-0.0.1-SNAPSHOT/user/";
 
   static const String separator = "/";
   static const String jpg_ext = ".jpg";

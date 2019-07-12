@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'constants.dart';
 import 'util.dart';
 import 'bookViewList.dart';
+import 'createAccount.dart';
 import 'sharedPreferencesHelper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,8 +15,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final logo = Image.asset('images/mgp-ereader-logo.png');
-  var docTypeList = ['DNI', 'CIP'];
   String docTypeSelected = 'DNI';
   final docNumController = TextEditingController();
   final passController = TextEditingController();
@@ -75,15 +74,24 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  void newAccount() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CreateAccountPage(),
+        ));
+  }
+
   Widget build(BuildContext context) {
     return new Scaffold(
         resizeToAvoidBottomPadding: false,
+        resizeToAvoidBottomInset: false,
         body: Container(
           child: Column(
             children: <Widget>[
               Container(
                 width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height / 2.5,
+                height: MediaQuery.of(context).size.height / 2.6,
                 decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
@@ -98,21 +106,9 @@ class _LoginPageState extends State<LoginPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Spacer(),
-                    Align(
-                      alignment: Alignment.center,
-                      child: logo,
-                    ),
-                    Spacer(),
-                    Align(
-                      alignment: Alignment.bottomRight,
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 32, right: 32),
-                        child: Text(
-                          'Iniciar Sesión',
-                          style: TextStyle(color: Colors.white, fontSize: 18),
-                        ),
-                      ),
+                    Container(
+                      padding: EdgeInsets.only(top: 30),
+                      child: Image.asset('images/mgp-ereader-logo.png'),
                     ),
                   ],
                 ),
@@ -120,15 +116,15 @@ class _LoginPageState extends State<LoginPage> {
               Container(
                 height: MediaQuery.of(context).size.height / 2,
                 width: MediaQuery.of(context).size.width,
-                padding: EdgeInsets.only(top: 62),
+                padding: EdgeInsets.only(top: 40),
                 child: Column(
                   children: <Widget>[
                     Container(
                       width: MediaQuery.of(context).size.width / 1.2,
                       height: 45,
-                      margin: EdgeInsets.only(top: 16),
+                      //margin: EdgeInsets.only(top: 16),
                       padding:
-                      EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
+                      EdgeInsets.only(left: 16, right: 16),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(50)),
                           color: Colors.white,
@@ -156,9 +152,9 @@ class _LoginPageState extends State<LoginPage> {
                     Container(
                       width: MediaQuery.of(context).size.width / 1.2,
                       height: 45,
-                      margin: EdgeInsets.only(top: 16),
+                      margin: EdgeInsets.only(top: 10),
                       padding:
-                      EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
+                      EdgeInsets.only(left: 16, right: 16),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(50)),
                           color: Colors.white,
@@ -181,7 +177,7 @@ class _LoginPageState extends State<LoginPage> {
                     Align(
                       alignment: Alignment.centerRight,
                       child: Padding(
-                        padding: const EdgeInsets.only(top: 16, right: 32),
+                        padding: const EdgeInsets.only(top: 10, right: 32),
                         child: Text(
                           '¿Olvidó su contraseña?',
                           style: TextStyle(color: Colors.grey),
@@ -190,7 +186,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     Container(
                       height: 45,
-                      margin: EdgeInsets.only(top: 20.0),
+                      margin: EdgeInsets.only(top: 80.0),
                       width: MediaQuery.of(context).size.width / 1.2,
                       child: Center(
                         child: RaisedButton(
@@ -206,6 +202,30 @@ class _LoginPageState extends State<LoginPage> {
                                   fontWeight: FontWeight.bold),
                             ),
                             onPressed: login),
+                      ),
+                    ),
+                    Container(
+                      child: GestureDetector(
+                        child: RaisedButton(
+                            textColor: Color.fromRGBO(2, 29, 38, 1.0),
+                            color: Colors.white,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                                side: BorderSide(
+                                  color: Color.fromRGBO(2, 29, 38, 1.0),
+                                  style: BorderStyle.solid,
+                                  width: 2
+                                )
+                            ),
+                            child: Text(
+                              'Crear Nueva Cuenta',
+                              style: TextStyle(
+                                  color: Color.fromRGBO(2, 29, 38, 1.0),
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            onPressed: newAccount
+                        ),
                       ),
                     ),
                   ],
