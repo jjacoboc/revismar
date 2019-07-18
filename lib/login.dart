@@ -85,13 +85,22 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return new Scaffold(
         resizeToAvoidBottomPadding: false,
-        resizeToAvoidBottomInset: false,
+        bottomNavigationBar: SizedBox(
+          height: 45.0,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Text('  '),
+            ],
+          ),
+        ),
         body: Container(
           child: Column(
             children: <Widget>[
               Container(
                 width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height / 2.6,
+                height: MediaQuery.of(context).size.height / 2.7,
                 decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
@@ -186,7 +195,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     Container(
                       height: 45,
-                      margin: EdgeInsets.only(top: 80.0),
+                      margin: EdgeInsets.only(top: 60.0),
                       width: MediaQuery.of(context).size.width / 1.2,
                       child: Center(
                         child: RaisedButton(
