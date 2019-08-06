@@ -95,6 +95,7 @@ class _BookListPageState extends State<BookListPage> {
           leading: Container(),
         ),
         body: _buildBody(),
+        //drawer: _buildDrawer(),
       );
   }
 
@@ -129,6 +130,35 @@ class _BookListPageState extends State<BookListPage> {
         ],
       );
     }
+  }
+
+  Widget _buildDrawer() {
+    return Drawer(
+      child: ListView(
+      // Important: Remove any padding from the ListView.
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          DrawerHeader(
+            child: Text('Drawer Header'),
+            decoration: BoxDecoration(
+              color: Colors.blue,
+            ),
+          ),
+          ListTile(
+            title: Text('Item 1'),
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            title: Text('Item 2'),
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   Widget getFrontCover(int year, int edition) {

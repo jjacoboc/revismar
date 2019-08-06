@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CreateAccountPage extends StatefulWidget {
   @override
@@ -146,7 +147,41 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
   Widget build(BuildContext context) {
     return new Scaffold(
       resizeToAvoidBottomPadding: false,
-      resizeToAvoidBottomInset: false,
+      bottomNavigationBar: Container(
+        padding: EdgeInsets.only(right: 16, left: 16),
+        height: 45.0,
+        alignment: Alignment.center,
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text('Al crear una cuenta aceptas nuestros '),
+                FlatButton(
+                  child:Text('Términos de Servicio', style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline)),
+                  onPressed: () => launch('https://agenciatrooper.com/mgp-aviso-de-privacidad/')
+                )
+              ],
+            ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text('y '),
+                FlatButton(
+                    child:Text('Políticas de Privacidad', style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline)),
+                    onPressed: () => launch('https://agenciatrooper.com/mgp-aviso-de-privacidad/')
+                ),
+                Text('.')
+              ],
+            ),
+          ],
+        ),
+      ),
       appBar: AppBar(
         title: Text("Nueva Cuenta"),
         backgroundColor: Color.fromRGBO(2, 29, 38, 1.0),
@@ -186,14 +221,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                 children: <Widget>[
                   Container(
                     width: MediaQuery.of(context).size.width / 1.2,
-                    padding:
-                    EdgeInsets.only(left: 16, right: 16),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(50)),
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(color: Colors.black12, blurRadius: 5)
-                        ]),
+                    padding: EdgeInsets.only(left: 16, right: 16),
                     child: TextField(
                       controller: docNumberController,
                       keyboardType: TextInputType.number,
@@ -203,113 +231,86 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                             new RegExp('[\\-|\\.|\\,|\\ ]'))
                       ],
                       decoration: InputDecoration(
-                        border: InputBorder.none,
+                        isDense: true,
                         icon: Icon(
-                          Icons.perm_identity,
-                          color: Colors.grey,
+                          Icons.chrome_reader_mode,
+                          color: Color.fromRGBO(2, 29, 38, 1.0),
                         ),
                         hintText: 'DNI',
+                        hintStyle: TextStyle(fontSize: 14)
                       ),
                     ),
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width / 1.2,
-                    margin: EdgeInsets.only(top: 5),
-                    padding:
-                    EdgeInsets.only(left: 16, right: 16),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(50)),
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(color: Colors.black12, blurRadius: 5)
-                        ]),
+                    padding: EdgeInsets.only(left: 16, right: 16),
                     child: TextField(
                       controller: firstNameController,
                       keyboardType: TextInputType.text,
                       decoration: InputDecoration(
-                        border: InputBorder.none,
+                        isDense: true,
                         icon: Icon(
                           Icons.account_box,
-                          color: Colors.grey,
+                          color: Color.fromRGBO(2, 29, 38, 1.0),
                         ),
                         hintText: 'Nombres',
+                        hintStyle: TextStyle(fontSize: 14)
                       ),
                     ),
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width / 1.2,
-                    margin: EdgeInsets.only(top: 5),
-                    padding:
-                    EdgeInsets.only(left: 16, right: 16),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(50)),
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(color: Colors.black12, blurRadius: 5)
-                        ]),
+                    padding: EdgeInsets.only(left: 16, right: 16),
                     child: TextField(
                       controller: lastNameController,
                       keyboardType: TextInputType.text,
                       decoration: InputDecoration(
-                        border: InputBorder.none,
+                        isDense: true,
                         icon: Icon(
                           Icons.account_box,
-                          color: Colors.grey,
+                          color: Color.fromRGBO(2, 29, 38, 1.0),
                         ),
                         hintText: 'Apellidos',
+                        hintStyle: TextStyle(fontSize: 14)
                       ),
                     ),
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width / 1.2,
-                    margin: EdgeInsets.only(top: 5),
-                    padding:
-                    EdgeInsets.only(left: 16, right: 16),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(50)),
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(color: Colors.black12, blurRadius: 5)
-                        ]),
+                    padding: EdgeInsets.only(left: 16, right: 16),
                     child: TextField(
                       controller: emailController,
                       keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
-                        border: InputBorder.none,
+                        isDense: true,
                         icon: Icon(
                           Icons.email,
-                          color: Colors.grey,
+                          color: Color.fromRGBO(2, 29, 38, 1.0),
                         ),
-                        hintText: 'Correo electrónico',
+                        hintStyle: TextStyle(fontSize: 14),
+                        hintText: 'Correo electrónico'
                       ),
                     ),
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width / 1.2,
-                    margin: EdgeInsets.only(top: 5),
-                    padding:
-                    EdgeInsets.only(left: 16, right: 16),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(50)),
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(color: Colors.black12, blurRadius: 5)
-                        ]),
+                    padding: EdgeInsets.only(left: 16, right: 16),
                     child: TextField(
                       controller: passController,
                       decoration: InputDecoration(
-                        border: InputBorder.none,
+                        isDense: true,
                         icon: Icon(
                           Icons.vpn_key,
-                          color: Colors.grey,
+                          color: Color.fromRGBO(2, 29, 38, 1.0),
                         ),
+                        hintStyle: TextStyle(fontSize: 14),
                         hintText: 'Contraseña (al menos 8 caracteres)',
                       ),
                       obscureText: true,
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(top: 18.0),
+                    margin: EdgeInsets.only(top: 28.0),
                     width: MediaQuery.of(context).size.width / 1.2,
                     child: Center(
                       child: RaisedButton(
