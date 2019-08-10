@@ -287,7 +287,7 @@
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/FMDB/FMDB.framework",
-				"${PODS_ROOT}/../.symlinks/flutter/ios/Flutter.framework",
+				"${PODS_ROOT}/../.symlinks/flutter/ios-release/Flutter.framework",
 				"${BUILT_PRODUCTS_DIR}/audioplayer/audioplayer.framework",
 				"${BUILT_PRODUCTS_DIR}/flutter_plugin_pdf_viewer/flutter_plugin_pdf_viewer.framework",
 				"${BUILT_PRODUCTS_DIR}/path_provider/path_provider.framework",
