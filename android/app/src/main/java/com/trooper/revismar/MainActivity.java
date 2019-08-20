@@ -1,4 +1,4 @@
-package com.example.revismar;
+package com.trooper.revismar;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;
