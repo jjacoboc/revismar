@@ -3,6 +3,9 @@ import 'constants.dart';
 import 'util.dart';
 import 'bookViewList.dart';
 import 'createAccount.dart';
+import 'resetPassword.dart';
+import 'changePassword.dart';
+import 'profile.dart';
 import 'sharedPreferencesHelper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -24,6 +27,7 @@ class _LoginPageState extends State<LoginPage> {
     String docNum = docNumController.text;
     if(docNum != '') {
       var response = await http.get(
+        //Uri.encodeFull('http://10.0.2.2:8084/login/' +
           Uri.encodeFull(Constants.url_login +
               Util.parseDocumentType(docTypeSelected) +
               "/" +
@@ -33,13 +37,22 @@ class _LoginPageState extends State<LoginPage> {
         Preference.setString('user', response.body);
         Map<String, dynamic> user = jsonDecode(response.body);
         String pass = user['password'];
+        int changePassword = user['changePassword'];
         if(passController.text != '') {
           if(pass == passController.text) {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => BookListPage(),
-                ));
+            if(changePassword == 1) {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ChangePasswordPage(),
+                  ));
+            } else {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => BookListPage(),
+                  ));
+            }
           } else {
             Alert(
               context: context,
@@ -79,6 +92,14 @@ class _LoginPageState extends State<LoginPage> {
         context,
         MaterialPageRoute(
           builder: (context) => CreateAccountPage(),
+        ));
+  }
+
+  void resetPassword() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ResetPasswordPage(),
         ));
   }
 
@@ -187,15 +208,18 @@ class _LoginPageState extends State<LoginPage> {
                       alignment: Alignment.centerRight,
                       child: Padding(
                         padding: const EdgeInsets.only(top: 10, right: 32),
-                        child: Text(
-                          '¿Olvidó su contraseña?',
-                          style: TextStyle(color: Colors.grey),
+                        child: FlatButton(
+                            onPressed: resetPassword,
+                            child: Text(
+                              '¿Olvidó su contraseña?',
+                              style: TextStyle(color: Colors.grey),
+                            ),
                         ),
                       ),
                     ),
                     Container(
                       height: 45,
-                      margin: EdgeInsets.only(top: 60.0),
+                      margin: EdgeInsets.only(top: 25.0),
                       width: MediaQuery.of(context).size.width / 1.2,
                       child: Center(
                         child: RaisedButton(

@@ -14,30 +14,36 @@ class CreateAccountPage extends StatefulWidget {
 }
 
 class _CreateAccountPageState extends State<CreateAccountPage> {
-
   final firstNameController = TextEditingController();
   final lastNameController = TextEditingController();
   final docNumberController = TextEditingController();
   final emailController = TextEditingController();
-  final passController = TextEditingController();
-  Pattern pattern = r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+  Pattern pattern =
+      r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
 
   void create() {
     String docNumber = docNumberController.text;
-    if(docNumber != '') {
-      if(docNumber.length == 8) {
+    if (docNumber != '') {
+      if (docNumber.length == 8) {
         String firstName = firstNameController.text;
-        if(firstName != '') {
+        if (firstName != '') {
           String lastName = lastNameController.text;
-          if(lastName != '') {
+          if (lastName != '') {
             String email = emailController.text;
-            if(email != '') {
-              if(EmailValidator.validate(email)){
-                String pass = passController.text;
-                if(pass != '') {
-                  if(pass.length >= 8) {
+            if (email != '') {
+              if (EmailValidator.validate(email)) {
+                this.getUserByEmail().then((http.Response response) {
+                  if (response.statusCode == 200) {
+                    Alert(
+                      context: context,
+                      title: "Error",
+                      desc:
+                          "Ya existe un Usuario con el Correo Electrónico ingresado.",
+                      type: AlertType.error,
+                    ).show();
+                  } else {
                     this.postRequest().then((http.Response response) {
-                      if(response.statusCode == 200) {
+                      if (response.statusCode == 200) {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -47,27 +53,14 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                         Alert(
                           context: context,
                           title: "Error",
-                          desc: "Ocurrio un error inesperado.\nContáctese con el proveedor del servicio.",
+                          desc:
+                              "Ocurrio un error inesperado.\nContáctese con el proveedor del servicio.",
                           type: AlertType.error,
                         ).show();
                       }
                     });
-                  } else {
-                    Alert(
-                      context: context,
-                      title: "Error",
-                      desc: "La contraseña debe tener al menos 8 caracteres.",
-                      type: AlertType.error,
-                    ).show();
                   }
-                } else {
-                  Alert(
-                    context: context,
-                    title: "Error",
-                    desc: "Campo requerido.\nDebe ingresar una contraseña.",
-                    type: AlertType.error,
-                  ).show();
-                }
+                });
               } else {
                 Alert(
                   context: context,
@@ -118,15 +111,25 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
     }
   }
 
-  Future<http.Response> postRequest () async {
+  Future<http.Response> getUserByEmail() async {
+    String email = emailController.text;
+    List<String> list = email.split("@");
+    String _email = list[0] + "@" + list[1].replaceAll(new RegExp(r'.'), ':');
+    return await http.get(
+        Uri.encodeFull(
+            Constants.url_userByEmail + _email + Constants.separator),
+        headers: {"Accept": "application/json"});
+  }
 
+  Future<http.Response> postRequest() async {
     Map user = {
       'names': firstNameController.text,
       'last_names': lastNameController.text,
       'document_type': 1,
       'document_number': docNumberController.text,
       'email': emailController.text,
-      'password': passController.text,
+      'changePassword': 1,
+      'password': '',
       'created_by': 0,
       'created_date': DateTime.now().millisecond,
       'updated_by': 0,
@@ -135,12 +138,8 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
     //encode Map to JSON
     var body = json.encode(user);
 
-    var response = await http.post(Constants.url_user,
-        headers: {"Content-Type": "application/json"},
-        body: body
-    );
-    print("${response.statusCode}");
-    print("${response.body}");
+    var response = await http.post(Uri.encodeFull(Constants.url_createUser),
+        headers: {"Content-Type": "application/json"}, body: body);
     return response;
   }
 
@@ -162,9 +161,12 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
               children: <Widget>[
                 Text('Al crear una cuenta aceptas nuestros '),
                 FlatButton(
-                  child:Text('Términos de Servicio', style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline)),
-                  onPressed: () => launch('https://agenciatrooper.com/mgp-aviso-de-privacidad/')
-                )
+                    child: Text('Términos de Servicio',
+                        style: TextStyle(
+                            color: Colors.blue,
+                            decoration: TextDecoration.underline)),
+                    onPressed: () => launch(
+                        'https://agenciatrooper.com/mgp-aviso-de-privacidad/'))
               ],
             ),
             Row(
@@ -173,9 +175,12 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
               children: <Widget>[
                 Text('y '),
                 FlatButton(
-                    child:Text('Políticas de Privacidad', style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline)),
-                    onPressed: () => launch('https://agenciatrooper.com/mgp-aviso-de-privacidad/')
-                ),
+                    child: Text('Políticas de Privacidad',
+                        style: TextStyle(
+                            color: Colors.blue,
+                            decoration: TextDecoration.underline)),
+                    onPressed: () => launch(
+                        'https://agenciatrooper.com/mgp-aviso-de-privacidad/')),
                 Text('.')
               ],
             ),
@@ -192,7 +197,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
           children: <Widget>[
             Container(
               width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height / 4.2  ,
+              height: MediaQuery.of(context).size.height / 4.2,
               decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
@@ -203,7 +208,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                     ],
                   ),
                   borderRadius:
-                  BorderRadius.only(bottomLeft: Radius.circular(90))),
+                      BorderRadius.only(bottomLeft: Radius.circular(90))),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
@@ -231,14 +236,13 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                             new RegExp('[\\-|\\.|\\,|\\ ]'))
                       ],
                       decoration: InputDecoration(
-                        isDense: true,
-                        icon: Icon(
-                          Icons.chrome_reader_mode,
-                          color: Color.fromRGBO(2, 29, 38, 1.0),
-                        ),
-                        hintText: 'DNI',
-                        hintStyle: TextStyle(fontSize: 14)
-                      ),
+                          isDense: true,
+                          icon: Icon(
+                            Icons.chrome_reader_mode,
+                            color: Color.fromRGBO(2, 29, 38, 1.0),
+                          ),
+                          hintText: 'DNI',
+                          hintStyle: TextStyle(fontSize: 14)),
                     ),
                   ),
                   Container(
@@ -248,14 +252,13 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                       controller: firstNameController,
                       keyboardType: TextInputType.text,
                       decoration: InputDecoration(
-                        isDense: true,
-                        icon: Icon(
-                          Icons.account_box,
-                          color: Color.fromRGBO(2, 29, 38, 1.0),
-                        ),
-                        hintText: 'Nombres',
-                        hintStyle: TextStyle(fontSize: 14)
-                      ),
+                          isDense: true,
+                          icon: Icon(
+                            Icons.account_box,
+                            color: Color.fromRGBO(2, 29, 38, 1.0),
+                          ),
+                          hintText: 'Nombres',
+                          hintStyle: TextStyle(fontSize: 14)),
                     ),
                   ),
                   Container(
@@ -265,14 +268,13 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                       controller: lastNameController,
                       keyboardType: TextInputType.text,
                       decoration: InputDecoration(
-                        isDense: true,
-                        icon: Icon(
-                          Icons.account_box,
-                          color: Color.fromRGBO(2, 29, 38, 1.0),
-                        ),
-                        hintText: 'Apellidos',
-                        hintStyle: TextStyle(fontSize: 14)
-                      ),
+                          isDense: true,
+                          icon: Icon(
+                            Icons.account_box,
+                            color: Color.fromRGBO(2, 29, 38, 1.0),
+                          ),
+                          hintText: 'Apellidos',
+                          hintStyle: TextStyle(fontSize: 14)),
                     ),
                   ),
                   Container(
@@ -282,31 +284,13 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                       controller: emailController,
                       keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
-                        isDense: true,
-                        icon: Icon(
-                          Icons.email,
-                          color: Color.fromRGBO(2, 29, 38, 1.0),
-                        ),
-                        hintStyle: TextStyle(fontSize: 14),
-                        hintText: 'Correo electrónico'
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: MediaQuery.of(context).size.width / 1.2,
-                    padding: EdgeInsets.only(left: 16, right: 16),
-                    child: TextField(
-                      controller: passController,
-                      decoration: InputDecoration(
-                        isDense: true,
-                        icon: Icon(
-                          Icons.vpn_key,
-                          color: Color.fromRGBO(2, 29, 38, 1.0),
-                        ),
-                        hintStyle: TextStyle(fontSize: 14),
-                        hintText: 'Contraseña (al menos 8 caracteres)',
-                      ),
-                      obscureText: true,
+                          isDense: true,
+                          icon: Icon(
+                            Icons.email,
+                            color: Color.fromRGBO(2, 29, 38, 1.0),
+                          ),
+                          hintStyle: TextStyle(fontSize: 14),
+                          hintText: 'Correo electrónico'),
                     ),
                   ),
                   Container(
@@ -314,16 +298,20 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                     width: MediaQuery.of(context).size.width / 1.2,
                     child: Center(
                       child: RaisedButton(
-                        textColor: Colors.white,
-                        color: Color.fromRGBO(2, 29, 38, 0.8),
-                        colorBrightness: Brightness.light,
-                        highlightColor: Color.fromRGBO(2, 29, 38, 1.0),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                        child: Text(
-                          'Crear Cuenta'.toUpperCase(),
-                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-                        ),
-                        onPressed: () => create()
+                          textColor: Colors.white,
+                          color: Color.fromRGBO(2, 29, 38, 0.8),
+                          colorBrightness: Brightness.light,
+                          highlightColor: Color.fromRGBO(2, 29, 38, 1.0),
+                          shape: RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0))),
+                          child: Text(
+                            'Crear Cuenta'.toUpperCase(),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
+                          ),
+                          onPressed: () => create()
                       ),
                     ),
                   ),

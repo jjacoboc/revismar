@@ -14,13 +14,14 @@ class Book {
   int edition;
   int year;
   String url;
+  int hasAudio;
   int createdBy;
   DateTime createdDate;
   int updatedBy;
   DateTime updatedDate;
   File cover;
 
-  Book(this.idtBook, this.code, this.title, this.author, this.publisher, this.edition, this.year, this.url, this.createdBy, this.createdDate, this.updatedBy, this.updatedDate);
+  Book(this.idtBook, this.code, this.title, this.author, this.publisher, this.edition, this.year, this.url, this.hasAudio, this.createdBy, this.createdDate, this.updatedBy, this.updatedDate);
 
   set setFile(File newCover) {
     cover = newCover;

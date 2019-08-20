@@ -16,6 +16,7 @@ Book _$BookFromJson(Map<String, dynamic> json) {
       json['edition'] as int,
       json['year'] as int,
       json['url'] as String,
+      json['hasAudio'] as int,
       json['createdBy'] as int,
       json['createdDate'] == null
           ? null
@@ -35,6 +36,7 @@ Map<String, dynamic> _$BookToJson(Book instance) => <String, dynamic>{
       'edition': instance.edition,
       'year': instance.year,
       'url': instance.url,
+      'hasAudio': instance.hasAudio,
       'createdBy': instance.createdBy,
       'createdDate': instance.createdDate?.toIso8601String(),
       'updatedBy': instance.updatedBy,

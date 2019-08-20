@@ -29,6 +29,7 @@ class _PdfViewerState extends State<PdfViewer> {
   String titleDocument;
 
   //audio player variables
+  int hasAudio = 0;
   bool _isAudioLoading = true;
   String year = '';
   String edition = '';
@@ -67,9 +68,13 @@ class _PdfViewerState extends State<PdfViewer> {
   @override
   void initState() {
     super.initState();
+    Preference.load();
+    this.hasAudio = Preference.getInt('hasAudio');
     this.downloadFile();
-    this._loadAudioFile();
-    this.initAudioPlayer();
+    if(this.hasAudio == 1) {
+      this._loadAudioFile();
+      this.initAudioPlayer();
+    }
   }
 
   @override
@@ -134,7 +139,6 @@ class _PdfViewerState extends State<PdfViewer> {
     Preference.load();
     String strYear = Preference.getString('year');
     String strEdition = Preference.getString('edition');
-    //String strOrder = Preference.getString('order');
     String strArticle = Preference.getString('article');
     String strAuthor = Preference.getString('author');
     String i = Preference.getString("indexSection");
@@ -142,14 +146,6 @@ class _PdfViewerState extends State<PdfViewer> {
     String filename = "audio" + i + j;
 
     String url = Constants.url_bucket + strYear + Constants.separator + strEdition + Constants.separator + filename + Constants.mp3_ext;
-
-    /*
-    var response = await http.get(
-        Uri.encodeFull(Constants.url_document + year + Constants.separator + edition + Constants.separator + filename + Constants.separator + Constants.mp3));
-        //Uri.encodeFull(Constants.url_audio + strYear + "/" + strEdition + "/" + strOrder));
-    var bytes = response.bodyBytes;
-    */
-
     final bytes = await _loadFileBytes(url, onError: (Exception exception) => print('_loadFile => exception $exception'));
     String dir = (await getApplicationDocumentsDirectory()).path;
     File file = new File('$dir/$filename.' + Constants.mp3);
@@ -184,7 +180,6 @@ class _PdfViewerState extends State<PdfViewer> {
     String title = Preference.getString("title");
     String i = Preference.getString("indexSection");
     String j = Preference.getString("indexArticle");
-    //String filename = Preference.getString("filename");
     String filename = "articulo" + i + j;
 
     var response = await http.get(
@@ -231,6 +226,9 @@ class _PdfViewerState extends State<PdfViewer> {
           appBar: AppBar(
             title: this.titleDocument != null ? Text(this.titleDocument) : Text(""),
             backgroundColor: Color.fromRGBO(2, 29, 38, 0.8),
+            leading: IconButton(icon:Icon(Icons.arrow_back),
+              onPressed:() => Navigator.pop(context, false),
+            ),
           ),
           resizeToAvoidBottomInset: false,
           resizeToAvoidBottomPadding: false,
@@ -250,15 +248,6 @@ class _PdfViewerState extends State<PdfViewer> {
                     ],
                   )
               ) : _page,
-                    /*
-                    PDFViewer(
-                        showIndicator: true,
-                        showNavigation: true,
-                        showPicker: false,
-                        document: pdfDocument,
-                        tooltip: PDFViewerTooltip(first: "Primero", last: "Utimo", next: "Siguiente", previous: "Anterior", jump: "Saltar", pick: "Escoger")),
-                    */
-                    //_buildPlayer(),
               ),
             bottomNavigationBar: _buildBottomAppBar(),
           ),
@@ -267,13 +256,28 @@ class _PdfViewerState extends State<PdfViewer> {
 
   Widget _buildBottomAppBar() {
     return BottomAppBar(
-      child: new Row(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          this.hasAudio == 1 ?
+          (duration == null ?
+            Container()
+                : Slider(
+              value: position?.inMilliseconds?.toDouble() ?? 0.0,
+              onChanged: (double value) =>
+                  audioPlayer.seek((value / 1000).roundToDouble()),
+              min: 0.0,
+              max: duration.inMilliseconds.toDouble(),
+              activeColor: Color.fromRGBO(2, 29, 38, 0.9),
+              inactiveColor: Colors.grey,
+            )
+          ) : Container(),
+          Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Expanded(
                 child: IconButton(
                   icon: Icon(Icons.first_page),
-                  //tooltip: widget.tooltip.first,
                   onPressed: () {
                     _pageNumber = 1;
                     _loadPage();
@@ -283,7 +287,6 @@ class _PdfViewerState extends State<PdfViewer> {
               Expanded(
                 child: IconButton(
                   icon: Icon(Icons.chevron_left),
-                  //tooltip: widget.tooltip.previous,
                   onPressed: () {
                     _pageNumber--;
                     if (1 > _pageNumber) {
@@ -293,12 +296,14 @@ class _PdfViewerState extends State<PdfViewer> {
                   },
                 ),
               ),
-              _isAudioLoading ?
+              this.hasAudio == 1 ?
+              (_isAudioLoading ?
               Expanded(
                   child: IconButton(
-                      iconSize: 64.0,
-                      icon: new Icon(Icons.play_arrow),
-                      color: Colors.grey
+                    iconSize: 64.0,
+                    icon: new Icon(Icons.play_arrow),
+                    color: Colors.grey,
+                    onPressed: null,
                   )
               ) :
               isPlaying ?
@@ -312,16 +317,16 @@ class _PdfViewerState extends State<PdfViewer> {
               ) :
               Expanded(
                   child: IconButton(
-                      onPressed: () => _playLocal(),
-                      iconSize: 64.0,
-                      icon: new Icon(Icons.play_arrow),
-                      color: Colors.green,
+                    onPressed: () => _playLocal(),
+                    iconSize: 64.0,
+                    icon: new Icon(Icons.play_arrow),
+                    color: Colors.green,
                   )
-              ),
+              )
+              ) : Container(),
               Expanded(
                 child: IconButton(
                   icon: Icon(Icons.chevron_right),
-                  //tooltip: widget.tooltip.next,
                   onPressed: () {
                     _pageNumber++;
                     if (pdfDocument.count < _pageNumber) {
@@ -343,70 +348,8 @@ class _PdfViewerState extends State<PdfViewer> {
               ),
             ],
           )
-
-    );
-  }
-
-  Widget _buildPlayer() {
-    return Container(
-        color: Colors.white,
-        padding: EdgeInsets.only(left: 16.0, right: 16.0),
-        child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                        onPressed: isPlaying ? null : () => _playLocal(),
-                        iconSize: 64.0,
-                        icon: new Icon(Icons.play_arrow),
-                        color: Color.fromRGBO(2, 29, 38, 0.9)
-                    ),
-                    IconButton(
-                        onPressed: isPlaying ? () => pause() : null,
-                        iconSize: 64.0,
-                        icon: new Icon(Icons.pause),
-                        color: Color.fromRGBO(2, 29, 38, 0.9)
-                    ),
-                    IconButton(
-                        onPressed: isPlaying || isPaused
-                            ? () => stop()
-                            : null,
-                        iconSize: 64.0,
-                        icon: new Icon(Icons.stop),
-                        color: Color.fromRGBO(2, 29, 38, 0.9)
-                    ),
-                  ]
-              ),
-              duration == null ?
-              Container()
-                  : Slider(
-                value: position?.inMilliseconds?.toDouble() ?? 0.0,
-                onChanged: (double value) =>
-                    audioPlayer.seek((value / 1000).roundToDouble()),
-                min: 0.0,
-                max: duration.inMilliseconds.toDouble(),
-                activeColor: Color.fromRGBO(2, 29, 38, 0.9),
-                inactiveColor: Colors.grey,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  IconButton(
-                      onPressed: () => mute(true),
-                      icon: new Icon(Icons.volume_off),
-                      color: Color.fromRGBO(2, 29, 38, 0.9)
-                  ),
-                  IconButton(
-                      onPressed: () => mute(false),
-                      icon: new Icon(Icons.volume_up),
-                      color: Color.fromRGBO(2, 29, 38, 0.9)
-                  ),
-                ],
-              ),
-            ]
-        )
+        ],
+      ),
     );
   }
 }

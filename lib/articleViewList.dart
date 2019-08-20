@@ -1,11 +1,15 @@
+import 'dart:io';
+import 'dart:convert';
 import 'article.dart';
 import 'section.dart';
 import 'sectionList.dart';
 import 'pdfViewer.dart';
 import 'audioPlayer.dart';
 import 'constants.dart';
+import 'profile.dart';
+import 'bookViewList.dart';
+import 'changePassword.dart';
 import 'sharedPreferencesHelper.dart';
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -22,12 +26,14 @@ class _ArticleViewListState extends State<ArticleViewList> {
   String strEdition;
   List<SectionList> sectionList;
   bool _loadingInProgress = true;
+  Map<String, dynamic> user;
 
   @override
   void initState() {
     super.initState();
     sectionList = new List<SectionList>();
     Preference.load();
+    this.user = jsonDecode(Preference.getString('user'));
     this.idtBook = Preference.getInt('idtBook');
     this.strYear = Preference.getInt('year').toString();
     this.strEdition = Preference.getInt('edition') < 10 ? "0" + Preference.getInt('edition').toString() : Preference.getInt('edition').toString();
@@ -39,7 +45,6 @@ class _ArticleViewListState extends State<ArticleViewList> {
     String sectionList = "";
     List<Section> sections = new List<Section>();
     http.get(
-        //Uri.encodeFull(Constants.url_years),
         Uri.encodeFull(Constants.url_sections + this.idtBook.toString()),
         headers: {"Accept": "application/json"}).then((http.Response   response) {
       sectionList = response.body;
@@ -48,7 +53,6 @@ class _ArticleViewListState extends State<ArticleViewList> {
         String body = "";
         List<Article> articles = new List<Article>();
         http.get(
-          //Uri.encodeFull(Constants.url_years),
             Uri.encodeFull(Constants.url_articles + section['idt_section'].toString()),
             headers: {"Accept": "application/json"}).then((http.Response response) {
               body = response.body;
@@ -232,6 +236,118 @@ class _ArticleViewListState extends State<ArticleViewList> {
     }
   }
 
+  Widget _buildDrawer() {
+    return Drawer(
+      child: ListView(
+        children: <Widget>[
+          UserAccountsDrawerHeader(
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Color.fromRGBO(2, 29, 38, 1.0),
+                      Color.fromRGBO(2, 29, 38, 0.8)
+                    ],
+                  )
+              ),
+              accountName: Row(
+                children: <Widget>[
+                  Icon(Icons.account_circle, color: Colors.white, size: 18),
+                  Padding(
+                    padding: EdgeInsets.only(left: 5.0),
+                    child: Text(this.user['names'] + ' ' + this.user['last_names']),
+                  ),
+                ],
+              ),
+              accountEmail: Row(
+                children: <Widget>[
+                  Icon(Icons.email, color: Colors.white, size: 18),
+                  Padding(
+                    padding: EdgeInsets.only(left: 5.0),
+                    child: Text(this.user['email']),
+                  ),
+                ],
+              ),
+              currentAccountPicture: Container(
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color.fromRGBO(242, 240, 242, 1),
+                    border: Border.all(style: BorderStyle.solid, color: Colors.white, width: 5),
+                    image: DecorationImage(image: AssetImage('images/avatar/avatar' + user['avatar'] + '.jpg'))
+                ),
+                width: 110,
+                height: 110,
+              )
+          ),
+          ListTile(
+            leading: Icon(Icons.book, color: Color.fromRGBO(2, 29, 38, 1.0), size: 20,),
+            title: Text('Biblioteca'),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => BookListPage(),
+                  ));
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.vpn_key, color: Color.fromRGBO(2, 29, 38, 1.0), size: 20,),
+            title: Text('Cambiar Contraseña'),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ChangePasswordPage(),
+                  ));
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.account_box, color: Color.fromRGBO(2, 29, 38, 1.0), size: 20,),
+            title: Text('Perfil'),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfilePage(),
+                  ));
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.exit_to_app, color: Colors.red, size: 20,),
+            title: Text('Salir', style: TextStyle(color: Colors.red),),
+            onTap: () {
+              exit(0);
+            },
+          ),
+          Divider(color: Color.fromRGBO(2, 29, 38, 1.0),),
+          ListTile(
+            title: RaisedButton(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(Icons.subscriptions, color: Colors.white),
+                    Padding(
+                      padding: EdgeInsets.only(left: 5.0),
+                      child: Text('Suscribirse', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold ,color: Colors.white),),
+                    ),
+                  ],
+                ),
+                color: Colors.green,
+                onPressed: () {}
+            ),
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
@@ -253,7 +369,7 @@ class _ArticleViewListState extends State<ArticleViewList> {
               _buildBody(),
             ],
           ),
-
+          drawer: _buildDrawer(),
         ),
     );
   }
