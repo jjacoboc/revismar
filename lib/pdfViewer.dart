@@ -243,7 +243,7 @@ class _PdfViewerState extends State<PdfViewer> {
                       ),
                       Container(
                         padding: EdgeInsets.only(top: 10.0),
-                        child: Text('cargando libro...', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, fontFamily: 'Times New Roman')),
+                        child: Text('cargando artículo...', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, fontFamily: 'Times New Roman')),
                       )
                     ],
                   )

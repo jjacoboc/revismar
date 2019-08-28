@@ -7,6 +7,7 @@ import 'pdfViewer.dart';
 import 'audioPlayer.dart';
 import 'constants.dart';
 import 'profile.dart';
+import 'suscription.dart';
 import 'bookViewList.dart';
 import 'changePassword.dart';
 import 'sharedPreferencesHelper.dart';
@@ -163,14 +164,14 @@ class _ArticleViewListState extends State<ArticleViewList> {
             if(title == 'SECCIÓN NACIONAL') _color = Color.fromRGBO(0, 117, 148, 1.0);
             if(title == 'SECCIÓN INTERNACIONAL') _color = Color.fromRGBO(0, 160, 161, 1.0);
             if(title == 'SECCIÓN COMENTARIOS Y PUBLICACIONES') _color = Color.fromRGBO(180, 165, 153, 1.0);
-            return Padding(
+            return Container(
               padding: EdgeInsets.only(top: 10.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Container(
                     child: Text(
-                      this.sectionList[0].sections[i].name.toUpperCase(),
+                      title,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontStyle: FontStyle.italic,
@@ -182,51 +183,54 @@ class _ArticleViewListState extends State<ArticleViewList> {
                     decoration: BoxDecoration(color: _color),
                     width: MediaQuery.of(context).size.width,
                   ),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: this.sectionList[0].sections[i].articles.length,
-                    itemBuilder: (context, j) {
-                      String ord = this.sectionList[0].sections[i].articles[j].order.toString();
-                      String nam = this.sectionList[0].sections[i].articles[j].name.toUpperCase();
-                      String aut = this.sectionList[0].sections[i].articles[j].author != null ?
-                      this.sectionList[0].sections[i].articles[j].author.toUpperCase() : "";
-                      return Padding(
-                        padding: EdgeInsets.only(top: 5.0, left: 5.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Text(ord + ". ", style: TextStyle(fontSize: 14)),
-                                Expanded(
-                                  child: Container(
-                                    child: Text(nam, style: TextStyle(fontSize: 14)),
-                                    padding: EdgeInsets.only(right: 5.0),
-                                  ),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.only(right: 5.0),
-                                  child: GestureDetector(
-                                    child: Image(
-                                      image: AssetImage('images/play_navy.jpg'),
-                                      height: 16.0,
-                                      width: 16.0,
+                  Scrollbar(
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: this.sectionList[0].sections[i].articles.length,
+                      itemBuilder: (context, j) {
+                        String ord = this.sectionList[0].sections[i].articles[j].order.toString();
+                        String nam = this.sectionList[0].sections[i].articles[j].name.toUpperCase();
+                        String aut = this.sectionList[0].sections[i].articles[j].author != null ?
+                        this.sectionList[0].sections[i].articles[j].author.toUpperCase() : "";
+                        return Container(
+                          padding: EdgeInsets.only(top: 5.0, left: 5.0),
+                          width: MediaQuery.of(context).size.width,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Text(ord + ". ", style: TextStyle(fontSize: 14)),
+                                  Expanded(
+                                    child: Container(
+                                      child: Text(nam, style: TextStyle(fontSize: 14)),
+                                      padding: EdgeInsets.only(right: 5.0),
                                     ),
-                                    //onTap: () { this.toAudioBook(ord, nam, aut); },
-                                    onTap: () { this.toPdfViewer(ord, nam, aut, i+1, j+1); },
                                   ),
-                                ),
-                              ],
-                            ),
-                            Container(
-                              padding: EdgeInsets.only(left: 15.0),
-                              child: Text(aut, style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic)),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
+                                  Container(
+                                    padding: EdgeInsets.only(right: 5.0),
+                                    child: GestureDetector(
+                                      child: Image(
+                                        image: AssetImage('images/play_navy.jpg'),
+                                        height: 16.0,
+                                        width: 16.0,
+                                      ),
+                                      //onTap: () { this.toAudioBook(ord, nam, aut); },
+                                      onTap: () { this.toPdfViewer(ord, nam, aut, i+1, j+1); },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Container(
+                                padding: EdgeInsets.only(left: 15.0),
+                                child: Text(aut, style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic)),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ],
               ),
@@ -337,7 +341,13 @@ class _ArticleViewListState extends State<ArticleViewList> {
                   ],
                 ),
                 color: Colors.green,
-                onPressed: () {}
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SuscriptionPage(),
+                      ));
+                }
             ),
             onTap: () {
               Navigator.pop(context);

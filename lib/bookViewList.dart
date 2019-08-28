@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'book.dart';
 import 'bookList.dart';
 import 'constants.dart';
+import 'suscription.dart';
 import 'articleViewList.dart';
 import 'changePassword.dart';
 import 'profile.dart';
@@ -291,7 +292,13 @@ class _BookListPageState extends State<BookListPage> with SingleTickerProviderSt
                   ],
                 ),
                 color: Colors.green,
-                onPressed: () {}
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SuscriptionPage(),
+                      ));
+                }
             ),
             onTap: () {
               Navigator.pop(context);

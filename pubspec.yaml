@@ -11,7 +11,7 @@ description: Library to list and read documents
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.0+1
+version: 1.0.0+17
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
@@ -28,6 +28,7 @@ dependencies:
   flutter_staggered_grid_view: ^0.3.0
   flutter_plugin_pdf_viewer: ^1.0.7
   amazon_cognito_identity_dart: any
+  font_awesome_flutter: ^8.5.0
   audioplayer: 0.5.2
   url_launcher: ^5.0.2
 
@@ -74,6 +75,8 @@ flutter:
     - images/sumario.jpg
     - images/caratula.jpg
     - images/resetpass.png
+    - images/link.png
+    - images/finances_gray_icon.jpg
     - images/avatar/avatar00.jpg
     - images/avatar/avatar01.jpg
     - images/avatar/avatar02.jpg

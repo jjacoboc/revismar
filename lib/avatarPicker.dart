@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'profile.dart';
 import 'sharedPreferencesHelper.dart';
 
@@ -56,7 +55,7 @@ class _AvatarPickerPageState extends State<AvatarPickerPage> {
 
   List<Widget> getAvatars() {
     List<Widget> listImages = new List<Widget>();
-    for (int i = 1; i <= 16; i++) {
+    for (int i = 0; i <= 16; i++) {
       String str = i < 10 ? "0" + i.toString() : i.toString();
       listImages.add(
           Container(

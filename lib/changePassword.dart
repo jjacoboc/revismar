@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'bookViewList.dart';
+import 'suscription.dart';
 import 'constants.dart';
 import 'profile.dart';
 import 'dart:io';
@@ -161,7 +162,13 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                   ],
                 ),
                 color: Colors.green,
-                onPressed: () {}
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SuscriptionPage(),
+                      ));
+                }
             ),
             onTap: () {
               Navigator.pop(context);

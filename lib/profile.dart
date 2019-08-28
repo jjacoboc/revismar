@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:convert';
 import 'constants.dart';
+import 'suscription.dart';
 import 'avatarPicker.dart';
 import 'bookViewList.dart';
 import 'changePassword.dart';
@@ -31,6 +32,9 @@ class _ProfilePageState extends State<ProfilePage> {
   String _selectedGrado;
   Map<String, dynamic> user;
 
+  FocusNode _focusNode = FocusNode();
+  bool showPersonalData = true;
+
   @override
   initState() {
     super.initState();
@@ -60,11 +64,26 @@ class _ProfilePageState extends State<ProfilePage> {
         this._hasEmail = false;
       });
     }
+
+    _focusNode.addListener(() {
+      if (_focusNode.hasFocus) {
+        setState(() { showPersonalData = false; });
+      } else {
+        setState(() { showPersonalData = true; });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
   }
 
   Widget build(BuildContext context) {
     return new Scaffold(
-      resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomPadding: true,
+      resizeToAvoidBottomInset: false,
       appBar: _buildAppBar(),
       extendBody: true,
       body: _buildBodyEdit(),
@@ -138,168 +157,174 @@ class _ProfilePageState extends State<ProfilePage> {
               ],
             ),
           ),
-          Container(
-            height: MediaQuery.of(context).size.height / 2,
-            width: MediaQuery.of(context).size.width,
-            padding: EdgeInsets.only(top: 20),
-            child: Column(
-              children: <Widget>[
-                Container(
-                  width: MediaQuery.of(context).size.width / 1.2,
-                  padding: EdgeInsets.only(left: 16, right: 16),
-                  child: TextField(
-                    enabled: false,
-                    controller: docNumberController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      isDense: true,
-                      icon: Icon(
-                        Icons.chrome_reader_mode,
-                        color: Color.fromRGBO(2, 29, 38, 1.0),
+          Scrollbar(
+            child: Container(
+              height: MediaQuery.of(context).size.height / 2,
+              width: MediaQuery.of(context).size.width,
+              padding: EdgeInsets.only(top: 20),
+              child: Column(
+                children: <Widget>[
+                  showPersonalData ? Container(
+                    width: MediaQuery.of(context).size.width / 1.2,
+                    padding: EdgeInsets.only(left: 16, right: 16),
+                    child: TextField(
+                      enabled: false,
+                      controller: docNumberController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                          isDense: true,
+                          icon: Icon(
+                            Icons.chrome_reader_mode,
+                            color: Color.fromRGBO(2, 29, 38, 1.0),
+                          ),
+                          hintStyle: TextStyle(fontSize: 14, color: Colors.black),
+                          border: InputBorder.none
                       ),
-                      hintText: '1029983838',
-                      hintStyle: TextStyle(fontSize: 14, color: Colors.black),
-                      border: InputBorder.none
+                    ),
+                  ) : Container(),
+                  showPersonalData ? Container(
+                    width: MediaQuery.of(context).size.width / 1.2,
+                    padding: EdgeInsets.only(left: 16, right: 16),
+                    child: TextField(
+                      controller: firstNameController,
+                      keyboardType: TextInputType.text,
+                      decoration: InputDecoration(
+                          isDense: true,
+                          icon: Icon(
+                            Icons.account_box,
+                            color: Color.fromRGBO(2, 29, 38, 1.0),
+                          ),
+                          hintText: 'Nombres',
+                          hintStyle: TextStyle(fontSize: 14)),
+                    ),
+                  ) : Container(),
+                  showPersonalData ? Container(
+                    width: MediaQuery.of(context).size.width / 1.2,
+                    padding: EdgeInsets.only(left: 16, right: 16),
+                    child: TextField(
+                      controller: lastNameController,
+                      keyboardType: TextInputType.text,
+                      decoration: InputDecoration(
+                          isDense: true,
+                          icon: Icon(
+                            Icons.account_box,
+                            color: Color.fromRGBO(2, 29, 38, 1.0),
+                          ),
+                          hintText: 'Apellidos',
+                          hintStyle: TextStyle(fontSize: 14)),
+                    ),
+                  ) : Container(),
+                  showPersonalData ? Container(
+                    width: MediaQuery.of(context).size.width / 1.2,
+                    padding: EdgeInsets.only(left: 16, right: 16),
+                    child: TextField(
+                      controller: emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: InputDecoration(
+                          isDense: true,
+                          icon: Icon(
+                            Icons.email,
+                            color: Color.fromRGBO(2, 29, 38, 1.0),
+                          ),
+                          hintStyle: TextStyle(fontSize: 14),
+                          hintText: 'Correo electrónico'),
+                    ),
+                  ) : Container(),
+                  showPersonalData ? SizedBox(height: 10) : SizedBox(),
+                  Container(
+                    width: MediaQuery.of(context).size.width / 1.2,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: <Widget>[
+                        Checkbox(
+                            value: _isChecked,
+                            activeColor: Color.fromRGBO(2, 29, 38, 1.0),
+                            onChanged: (bool val) => setState(() { _isChecked = val; showPersonalData = true; })
+                        ),
+                        Expanded(
+                            child: Container(
+                                child: Text('Soy integrante de "La Marina de Guerra del Peru"', style: TextStyle(fontSize: 13)),
+                                padding: EdgeInsets.only(right: 10.0)
+                            )
+                        )
+                      ],
                     ),
                   ),
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width / 1.2,
-                  padding: EdgeInsets.only(left: 16, right: 16),
-                  child: TextField(
-                    controller: firstNameController,
-                    keyboardType: TextInputType.text,
-                    decoration: InputDecoration(
-                        isDense: true,
-                        icon: Icon(
-                          Icons.account_box,
-                          color: Color.fromRGBO(2, 29, 38, 1.0),
-                        ),
-                        hintText: 'Nombres',
-                        hintStyle: TextStyle(fontSize: 14)),
-                  ),
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width / 1.2,
-                  padding: EdgeInsets.only(left: 16, right: 16),
-                  child: TextField(
-                    controller: lastNameController,
-                    keyboardType: TextInputType.text,
-                    decoration: InputDecoration(
-                        isDense: true,
-                        icon: Icon(
-                          Icons.account_box,
-                          color: Color.fromRGBO(2, 29, 38, 1.0),
-                        ),
-                        hintText: 'Apellidos',
-                        hintStyle: TextStyle(fontSize: 14)),
-                  ),
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width / 1.2,
-                  padding: EdgeInsets.only(left: 16, right: 16),
-                  child: TextField(
-                    controller: emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
-                        isDense: true,
-                        icon: Icon(
-                          Icons.email,
-                          color: Color.fromRGBO(2, 29, 38, 1.0),
-                        ),
-                        hintStyle: TextStyle(fontSize: 14),
-                        hintText: 'Correo electrónico'),
-                  ),
-                ),
-                SizedBox(height: 10),
-                Container(
-                  width: MediaQuery.of(context).size.width / 1.2,
-                  //padding: EdgeInsets.only(left: 16, right: 16),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: <Widget>[
-                      Checkbox(
-                          value: _isChecked,
-                          activeColor: Color.fromRGBO(2, 29, 38, 1.0),
-                          onChanged: (bool val) => setState(() => _isChecked = val)
-                      ),
-                      Expanded(
-                          child: Container(
-                            child: Text('Soy integrante de "La Marina de Guerra del Peru"', style: TextStyle(fontSize: 13)),
-                            padding: EdgeInsets.only(right: 10.0)
-                          )
-                      )
-                    ],
-                  ),
-                ),
-                _isChecked ? Container(
-                  width: MediaQuery.of(context).size.width / 1.2,
-                  padding: EdgeInsets.only(left: 16, right: 16),
-                  child: Row(
-                    children: <Widget>[
-                      Flexible(
-                        child: TextField(
-                          controller: cipController,
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                              icon: Icon(
-                                Icons.account_box,
-                                size: 18,
-                                color: Color.fromRGBO(2, 29, 38, 1.0),
-                              ),
-                              hintText: 'CIP',
-                              hintStyle: TextStyle(fontSize: 14),
-                            contentPadding: EdgeInsets.only(bottom: 5)
+                  _isChecked ? Container(
+                    width: MediaQuery.of(context).size.width / 1.2,
+                    padding: EdgeInsets.only(left: 16, right: 16),
+                    child: Row(
+                      children: <Widget>[
+                        Flexible(
+                          child: TextField(
+                            controller: cipController,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(8),
+                              BlacklistingTextInputFormatter(
+                                  new RegExp('[\\-|\\.|\\,|\\ ]'))
+                            ],
+                            decoration: InputDecoration(
+                                icon: Icon(
+                                  Icons.account_box,
+                                  size: 18,
+                                  color: Color.fromRGBO(2, 29, 38, 1.0),
+                                ),
+                                hintText: 'CIP',
+                                hintStyle: TextStyle(fontSize: 14),
+                                contentPadding: EdgeInsets.only(bottom: 5)
+                            ),
+                            focusNode: _focusNode,
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 15.0),
-                        child: DropdownButton(
-                          hint: Text("Grado"),
-                          value: _selectedGrado,
-                          items: _grados.map((grado) {
-                            return DropdownMenuItem(
-                              child: Text(grado),
-                              value: grado,
-                            );
-                          }).toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              _selectedGrado = value;
-                            });
-                          },
-                          underline: Container(),
+                        Padding(
+                          padding: EdgeInsets.only(left: 15.0),
+                          child: DropdownButton(
+                            hint: Text("Grado"),
+                            value: _selectedGrado,
+                            items: _grados.map((grado) {
+                              return DropdownMenuItem(
+                                child: Text(grado),
+                                value: grado,
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                _selectedGrado = value;
+                              });
+                            },
+                            underline: Container(),
+                          ),
                         ),
+                      ],
+                    ),
+                  ) : Container(),
+                  Container(
+                    margin: EdgeInsets.only(top: 10.0),
+                    width: MediaQuery.of(context).size.width / 1.2,
+                    child: Center(
+                      child: RaisedButton(
+                          textColor: Colors.white,
+                          color: Color.fromRGBO(2, 29, 38, 0.8),
+                          colorBrightness: Brightness.light,
+                          highlightColor: Color.fromRGBO(2, 29, 38, 1.0),
+                          shape: RoundedRectangleBorder(
+                              borderRadius:
+                              BorderRadius.all(Radius.circular(10.0))),
+                          child: Text(
+                            'Registrar'.toUpperCase(),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
+                          ),
+                          onPressed: () => update()
                       ),
-                    ],
-                  ),
-                ) : Container(),
-                Container(
-                  margin: EdgeInsets.only(top: 20.0),
-                  width: MediaQuery.of(context).size.width / 1.2,
-                  child: Center(
-                    child: RaisedButton(
-                        textColor: Colors.white,
-                        color: Color.fromRGBO(2, 29, 38, 0.8),
-                        colorBrightness: Brightness.light,
-                        highlightColor: Color.fromRGBO(2, 29, 38, 1.0),
-                        shape: RoundedRectangleBorder(
-                            borderRadius:
-                            BorderRadius.all(Radius.circular(10.0))),
-                        child: Text(
-                          'Registrar'.toUpperCase(),
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white),
-                        ),
-                        onPressed: () => update()
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          )
+          ),
         ],
       ),
     );
@@ -406,7 +431,13 @@ class _ProfilePageState extends State<ProfilePage> {
                   ],
                 ),
                 color: Colors.green,
-                onPressed: () {}
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SuscriptionPage(),
+                    ));
+                }
             ),
             onTap: () {
               Navigator.pop(context);
