@@ -11,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -105,7 +106,7 @@ class _ProfilePageState extends State<ProfilePage> {
         children: <Widget>[
           Container(
             width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height / 4.2,
+            height: MediaQuery.of(context).size.height / 4.5,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
@@ -130,8 +131,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     border: Border.all(style: BorderStyle.solid, color: Colors.white, width: 5),
                     image: DecorationImage(image: AssetImage('images/avatar/avatar' + user['avatar'] + '.jpg'))
                   ),
-                  width: 110,
-                  height: 110,
+                  width: 100,
+                  height: 100,
                   child: Align(
                     child: Container(
                       child: GestureDetector(
@@ -154,6 +155,18 @@ class _ProfilePageState extends State<ProfilePage> {
                     alignment: Alignment(1, -1),
                   ),
                 ),
+                SizedBox(height: 5),
+                Container(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Icon(FontAwesomeIcons.solidIdCard, color: Colors.white, size: 18),
+                      SizedBox(width: 10),
+                      Text(user['document_number'], style: TextStyle(color: Colors.white)),
+                    ],
+                  )
+                )
               ],
             ),
           ),
@@ -164,6 +177,7 @@ class _ProfilePageState extends State<ProfilePage> {
               padding: EdgeInsets.only(top: 20),
               child: Column(
                 children: <Widget>[
+                  /*
                   showPersonalData ? Container(
                     width: MediaQuery.of(context).size.width / 1.2,
                     padding: EdgeInsets.only(left: 16, right: 16),
@@ -174,7 +188,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       decoration: InputDecoration(
                           isDense: true,
                           icon: Icon(
-                            Icons.chrome_reader_mode,
+                            FontAwesomeIcons.addressCard,
                             color: Color.fromRGBO(2, 29, 38, 1.0),
                           ),
                           hintStyle: TextStyle(fontSize: 14, color: Colors.black),
@@ -182,6 +196,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ),
                   ) : Container(),
+                  */
                   showPersonalData ? Container(
                     width: MediaQuery.of(context).size.width / 1.2,
                     padding: EdgeInsets.only(left: 16, right: 16),
@@ -191,7 +206,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       decoration: InputDecoration(
                           isDense: true,
                           icon: Icon(
-                            Icons.account_box,
+                            FontAwesomeIcons.userCircle,
                             color: Color.fromRGBO(2, 29, 38, 1.0),
                           ),
                           hintText: 'Nombres',
@@ -207,7 +222,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       decoration: InputDecoration(
                           isDense: true,
                           icon: Icon(
-                            Icons.account_box,
+                            FontAwesomeIcons.userCircle,
                             color: Color.fromRGBO(2, 29, 38, 1.0),
                           ),
                           hintText: 'Apellidos',
@@ -223,7 +238,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       decoration: InputDecoration(
                           isDense: true,
                           icon: Icon(
-                            Icons.email,
+                            FontAwesomeIcons.envelope,
                             color: Color.fromRGBO(2, 29, 38, 1.0),
                           ),
                           hintStyle: TextStyle(fontSize: 14),
@@ -266,7 +281,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             ],
                             decoration: InputDecoration(
                                 icon: Icon(
-                                  Icons.account_box,
+                                  FontAwesomeIcons.addressCard,
                                   size: 18,
                                   color: Color.fromRGBO(2, 29, 38, 1.0),
                                 ),
@@ -300,7 +315,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ) : Container(),
                   Container(
-                    margin: EdgeInsets.only(top: 10.0),
+                    margin: EdgeInsets.only(top: 20.0),
                     width: MediaQuery.of(context).size.width / 1.2,
                     child: Center(
                       child: RaisedButton(
@@ -375,7 +390,7 @@ class _ProfilePageState extends State<ProfilePage> {
               )
           ),
           ListTile(
-            leading: Icon(Icons.book, color: Color.fromRGBO(2, 29, 38, 1.0), size: 20,),
+            leading: Icon(FontAwesomeIcons.bookOpen, color: Color.fromRGBO(2, 29, 38, 1.0), size: 18,),
             title: Text('Biblioteca'),
             onTap: () {
               Navigator.pop(context);
@@ -387,7 +402,7 @@ class _ProfilePageState extends State<ProfilePage> {
             },
           ),
           ListTile(
-            leading: Icon(Icons.vpn_key, color: Color.fromRGBO(2, 29, 38, 1.0), size: 20,),
+            leading: Icon(FontAwesomeIcons.key, color: Color.fromRGBO(2, 29, 38, 1.0), size: 18,),
             title: Text('Cambiar Contraseña'),
             onTap: () {
               Navigator.pop(context);
@@ -399,7 +414,7 @@ class _ProfilePageState extends State<ProfilePage> {
             },
           ),
           ListTile(
-            leading: Icon(Icons.account_box, color: Color.fromRGBO(2, 29, 38, 1.0), size: 20,),
+            leading: Icon(FontAwesomeIcons.solidAddressCard, color: Color.fromRGBO(2, 29, 38, 1.0), size: 18,),
             title: Text('Perfil'),
             onTap: () {
               Navigator.pop(context);
@@ -411,7 +426,7 @@ class _ProfilePageState extends State<ProfilePage> {
             },
           ),
           ListTile(
-            leading: Icon(Icons.exit_to_app, color: Colors.red, size: 20,),
+            leading: Icon(FontAwesomeIcons.signOutAlt, color: Colors.red, size: 18,),
             title: Text('Salir', style: TextStyle(color: Colors.red),),
             onTap: () {
               exit(0);

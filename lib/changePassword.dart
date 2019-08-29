@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ChangePasswordPage extends StatefulWidget {
   @override
@@ -106,7 +107,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
               )
           ),
           ListTile(
-            leading: Icon(Icons.book, color: Color.fromRGBO(2, 29, 38, 1.0), size: 20,),
+            leading: Icon(FontAwesomeIcons.bookOpen, color: Color.fromRGBO(2, 29, 38, 1.0), size: 18,),
             title: Text('Biblioteca'),
             onTap: () {
               Navigator.pop(context);
@@ -118,7 +119,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
             },
           ),
           ListTile(
-            leading: Icon(Icons.vpn_key, color: Color.fromRGBO(2, 29, 38, 1.0), size: 20,),
+            leading: Icon(FontAwesomeIcons.key, color: Color.fromRGBO(2, 29, 38, 1.0), size: 18,),
             title: Text('Cambiar Contraseña'),
             onTap: () {
               Navigator.pop(context);
@@ -130,7 +131,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
             },
           ),
           ListTile(
-            leading: Icon(Icons.account_box, color: Color.fromRGBO(2, 29, 38, 1.0), size: 20,),
+            leading: Icon(FontAwesomeIcons.solidAddressCard, color: Color.fromRGBO(2, 29, 38, 1.0), size: 18,),
             title: Text('Perfil'),
             onTap: () {
               Navigator.pop(context);
@@ -142,7 +143,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
             },
           ),
           ListTile(
-            leading: Icon(Icons.exit_to_app, color: Colors.red, size: 20,),
+            leading: Icon(FontAwesomeIcons.signOutAlt, color: Colors.red, size: 18,),
             title: Text('Salir', style: TextStyle(color: Colors.red),),
             onTap: () {
               exit(0);
