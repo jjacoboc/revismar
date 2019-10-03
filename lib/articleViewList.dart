@@ -203,11 +203,22 @@ class _ArticleViewListState extends State<ArticleViewList> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: <Widget>[
-                                  Text(ord + ". ", style: TextStyle(fontSize: 14)),
-                                  Expanded(
-                                    child: Container(
-                                      child: Text(nam, style: TextStyle(fontSize: 14)),
-                                      padding: EdgeInsets.only(right: 5.0),
+                                  Container(
+                                    child: GestureDetector(
+                                      child: Text(ord + ". ", style: TextStyle(fontSize: 14)),
+                                      onTap: () { this.toPdfViewer(ord, nam, aut, i+1, j+1); },
+                                    )
+                                  ),
+                                  Container(
+                                    //padding: EdgeInsets.only(right: 5.0),
+                                    child: Expanded(
+                                      child: GestureDetector(
+                                        child: Container(
+                                          padding: EdgeInsets.only(right: 5.0),
+                                          child: Text(nam, style: TextStyle(fontSize: 14)),
+                                        ),
+                                        onTap: () { this.toPdfViewer(ord, nam, aut, i+1, j+1); },
+                                      ),
                                     ),
                                   ),
                                   Container(
@@ -218,7 +229,6 @@ class _ArticleViewListState extends State<ArticleViewList> {
                                         height: 16.0,
                                         width: 16.0,
                                       ),
-                                      //onTap: () { this.toAudioBook(ord, nam, aut); },
                                       onTap: () { this.toPdfViewer(ord, nam, aut, i+1, j+1); },
                                     ),
                                   ),

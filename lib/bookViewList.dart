@@ -61,6 +61,7 @@ class _BookListPageState extends State<BookListPage> with SingleTickerProviderSt
           item != null ? StaggeredGridView.count(
             crossAxisCount: 3,
             shrinkWrap: true,
+            physics: ClampingScrollPhysics(),
             children: List.generate(item.books.length, (index) {
               return Center (
                 child: Card(

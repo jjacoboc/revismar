@@ -211,7 +211,7 @@ class _SuscriptionPageState extends State<SuscriptionPage> {
                   child: Row(
                     children: <Widget>[
                       Icon(
-                        FontAwesomeIcons.facebook,
+                        Icons.home,
                         color: Color.fromRGBO(2, 29, 38, 1.0),
                         size: 20,
                       ),
@@ -257,7 +257,7 @@ class _SuscriptionPageState extends State<SuscriptionPage> {
                   child: Row(
                     children: <Widget>[
                       Icon(
-                        Icons.home,
+                        FontAwesomeIcons.facebook,
                         color: Color.fromRGBO(2, 29, 38, 1.0),
                         size: 20,
                       ),

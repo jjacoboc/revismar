@@ -36,7 +36,7 @@ class _LoginPageState extends State<LoginPage> {
         Preference.setString('user', response.body);
         Map<String, dynamic> user = jsonDecode(response.body);
         String pass = user['password'];
-        int changePassword = user['changePassword'];
+        int changePassword = user['change_password'];
         if(passController.text != '') {
           if(pass == passController.text) {
             if(changePassword == 1) {

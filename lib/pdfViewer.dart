@@ -31,6 +31,7 @@ class _PdfViewerState extends State<PdfViewer> {
   //audio player variables
   int hasAudio = 0;
   bool _isAudioLoading = true;
+  bool _isAudioLoaded = false;
   String year = '';
   String edition = '';
   String article = '';
@@ -146,7 +147,15 @@ class _PdfViewerState extends State<PdfViewer> {
     String filename = "audio" + i + j;
 
     String url = Constants.url_bucket + strYear + Constants.separator + strEdition + Constants.separator + filename + Constants.mp3_ext;
-    final bytes = await _loadFileBytes(url, onError: (Exception exception) => print('_loadFile => exception $exception'));
+    final bytes = await _loadFileBytes(
+        url,
+        onError: (Exception exception) {
+          setState(() {
+            _isAudioLoaded = false;
+            _isAudioLoading = false;
+          });
+          print('_loadFile => exception $exception');
+        });
     String dir = (await getApplicationDocumentsDirectory()).path;
     File file = new File('$dir/$filename.' + Constants.mp3);
 
@@ -158,6 +167,7 @@ class _PdfViewerState extends State<PdfViewer> {
         edition = strEdition;
         article = strArticle;
         author = strAuthor;
+        _isAudioLoaded = true;
         _isAudioLoading = false;
       });
     }
@@ -298,31 +308,46 @@ class _PdfViewerState extends State<PdfViewer> {
               ),
               this.hasAudio == 1 ?
               (_isAudioLoading ?
-              Expanded(
+                Expanded(
+                  child: Column(
+                    children: <Widget>[
+                      Image.asset(
+                        'images/loading.gif',
+                        height: 48,
+                        width: 48
+                      ),
+                      Text('Cargando audio...', style: TextStyle(color: Colors.black, fontSize: 10, fontWeight: FontWeight.bold)),
+                      SizedBox(height: 10,)
+                    ],
+                  ),
+                ) : _isAudioLoaded ?
+                (
+                  isPlaying ?
+                  Expanded(
+                    child: IconButton(
+                      onPressed: () => pause(),
+                      iconSize: 64.0,
+                      icon: new Icon(Icons.pause),
+                      color: Colors.amber
+                    )
+                  ) :
+                  Expanded(
+                    child: IconButton(
+                      onPressed: () => _playLocal(),
+                      iconSize: 64.0,
+                      icon: new Icon(Icons.play_arrow),
+                      color: Colors.green,
+                    )
+                  )
+                ) :
+                Expanded(
                   child: IconButton(
                     iconSize: 64.0,
                     icon: new Icon(Icons.play_arrow),
                     color: Colors.grey,
                     onPressed: null,
                   )
-              ) :
-              isPlaying ?
-              Expanded(
-                  child: IconButton(
-                      onPressed: () => pause(),
-                      iconSize: 64.0,
-                      icon: new Icon(Icons.pause),
-                      color: Colors.amber
-                  )
-              ) :
-              Expanded(
-                  child: IconButton(
-                    onPressed: () => _playLocal(),
-                    iconSize: 64.0,
-                    icon: new Icon(Icons.play_arrow),
-                    color: Colors.green,
-                  )
-              )
+                )
               ) : Container(),
               Expanded(
                 child: IconButton(

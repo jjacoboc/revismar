@@ -33,7 +33,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     super.initState();
     Preference.load();
     user = jsonDecode(Preference.getString('user'));
-    if(user['changePassword'] == 1) {
+    if(user['change_password'] == 1) {
       setState(() {
         drawerEnable = false;
       });
@@ -188,7 +188,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
         String confirmPassword = confirmPasswordController.text;
         if(confirmPassword != ''){
           if(newPassword == confirmPassword) {
-            user['changePassword'] = 0;
+            user['change_password'] = 0;
             user['password'] = newPassword;
             user['updated_date'] = DateTime.now().millisecond;
             user['updated_by'] = user['idt_user'];
