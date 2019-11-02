@@ -34,9 +34,10 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
             );
             Alert(
               context: context,
-              title: "Éxito!",
+              title: Constants.alert_success_title,
               desc: "Se envió su nueva contraseña al correo electrónico: \n" + Util.obscureEmail(user['email']),
               type: AlertType.success,
+              style: AlertStyle(isOverlayTapDismiss: false),
               closeFunction: () {
                 Navigator.push(
                     context,

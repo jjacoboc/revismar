@@ -200,9 +200,10 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
               if(response.statusCode == 200) {
                 Alert(
                     context: context,
-                    title: "Éxito!",
-                    desc: "Su nueva contraseña ah sido registrada!",
+                    title: Constants.alert_success_title,
+                    desc: Constants.changePass_success_description,
                     type: AlertType.success,
+                    style: AlertStyle(isOverlayTapDismiss: false),
                     closeFunction: () {
                       if(_hasEmail) {
                         Navigator.push(
@@ -222,8 +223,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
               } else {
                 Alert(
                     context: context,
-                    title: "Error!",
-                    desc: "Ocurrió un error inesperado!\nPor favor, comuníquese con el proveedor del servicio.",
+                    title: Constants.alert_error_title,
+                    desc: Constants.changePass_error_unexpected,
                     type: AlertType.error
                 ).show();
               }
@@ -232,26 +233,23 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
             setState(() {
               this.errorText = Constants.changePass_error_confirmPassEquals;
             });
-            this.cleanErrorMsg();
           }
         } else {
           setState(() {
             this.errorText = Constants.changePass_error_confirmPassRequired;
           });
-          this.cleanErrorMsg();
         }
       } else {
         setState(() {
           this.errorText = Constants.changePass_error_newPassRequired;
         });
-        this.cleanErrorMsg();
       }
     } else {
       setState(() {
         this.errorText = Constants.changePass_error_passRequired;
       });
-      this.cleanErrorMsg();
     }
+    this.cleanErrorMsg();
   }
 
   void cleanErrorMsg() {

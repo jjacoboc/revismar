@@ -493,6 +493,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           title: "Éxito!",
                           desc: "Los datos de su perfil han sido actualizados con éxito.",
                           type: AlertType.success,
+                          style: AlertStyle(isOverlayTapDismiss: false),
                           closeFunction: () {
                             Navigator.push(
                                 context,

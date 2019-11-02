@@ -62,8 +62,9 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                             Alert(
                               context: context,
                               title: "Exito",
-                              desc: "Su nueva cuenta ah sido registrada!.\nSu contraseña ah sido enviada al correo " + Util.obscureEmail(emailController.text),
+                              desc: "Su nueva cuenta ha sido registrada!.\nSu contraseña ha sido enviada al correo " + Util.obscureEmail(emailController.text),
                               type: AlertType.success,
+                              style: AlertStyle(isOverlayTapDismiss: false),
                               closeFunction: () {
                                 Navigator.push(
                                   context,

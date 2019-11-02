@@ -29,9 +29,12 @@ class Constants {
   static const String Audio_Book = "1";
   static const String No_Audio_Book = "0";
 
+  static const String alert_success_title = "Éxito!";
+  static const String alert_error_title = "Error!";
+
   static const String resetPass_title = "Olvidó su Contraseña?";
   static const String resetPass_text = "Por favor, ingrese el número de documento registrado en la aplicación para resetear su contraseña.";
-  static const String resetPass_btn = "Resetear Contraseña";
+  static const String resetPass_btn = "Restaurar Contraseña";
   static const String resetPass_hintText_DNI = "DNI";
   static const String resetPass_error_docNumberRequired = "Debe ingresar su número de documento.";
   static const String resetPass_error_docNumberNotFound = "El número de documento no se encuentra registrado.";
@@ -45,8 +48,10 @@ class Constants {
   static const String changePass_validation2 = "Al menos 1 letra minúscula (a..z)";
   static const String changePass_validation3 = "Al menos 1 letra mayúscula (A..Z)";
   static const String changePass_validation4 = "Al menos 1 número (0..9)";
+  static const String changePass_success_description = "Su nueva contraseña ha sido registrada!";
   static const String changePass_error_passRequired = "Debe ingresar su contraseña actual.";
   static const String changePass_error_newPassRequired = "Debe ingresar su nueva contraseña.";
   static const String changePass_error_confirmPassRequired = "Debe ingresar la confirmación de su nueva contraseña.";
   static const String changePass_error_confirmPassEquals = "La confirmación de la contraseña no coincide con la nueva contraseña ingresada.";
+  static const String changePass_error_unexpected = "Ocurrió un error inesperado!\nPor favor, comuníquese con el proveedor del servicio.";
 }

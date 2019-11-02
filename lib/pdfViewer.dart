@@ -316,7 +316,7 @@ class _PdfViewerState extends State<PdfViewer> {
                         height: 48,
                         width: 48
                       ),
-                      Text('Cargando audio...', style: TextStyle(color: Colors.black, fontSize: 10, fontWeight: FontWeight.bold)),
+                      Text('Cargando audio...', style: TextStyle(color: Colors.black, fontSize: 9, fontWeight: FontWeight.bold)),
                       SizedBox(height: 10,)
                     ],
                   ),

@@ -213,7 +213,7 @@ class _BookListPageState extends State<BookListPage> with SingleTickerProviderSt
                 Icon(Icons.account_circle, color: Colors.white, size: 18),
                 Padding(
                   padding: EdgeInsets.only(left: 5.0),
-                  child: Text(this.user['names'] + ' ' + this.user['last_names']),
+                  child: Text(this.user['names'] + ' ' + this.user['last_names']  ),
                 ),
               ],
             ),
